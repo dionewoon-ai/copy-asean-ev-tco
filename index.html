@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASEAN + Taiwan EV TCO Comparison</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --ev: #10b981; --ice: #ef4444; --hybrid: #f59e0b;
+  --bg: #0f172a; --surface: #1e293b; --surface2: #334155;
+  --text: #e2e8f0; --muted: #94a3b8; --border: #475569; --accent: #38bdf8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.hero{background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#0f172a 100%);padding:2.5rem 2rem 1.5rem;text-align:center;border-bottom:1px solid var(--border)}
+.hero h1{font-size:1.8rem;font-weight:700;margin-bottom:.4rem}
+.hero p{color:var(--muted);font-size:.95rem;max-width:750px;margin:0 auto}
+.container{max-width:1440px;margin:0 auto;padding:1.25rem}
+.section-title{font-size:1.15rem;margin:1.75rem 0 .75rem;padding-bottom:.4rem;border-bottom:1px solid var(--border)}
+
+/* Country selector */
+.country-bar{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;padding:1rem 1.5rem;background:var(--surface);border-bottom:1px solid var(--border)}
+.country-btn{padding:.45rem 1rem;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:.85rem;transition:all .2s;display:flex;align-items:center;gap:.4rem}
+.country-btn:hover{border-color:var(--accent);color:var(--text)}
+.country-btn.active{background:var(--accent);color:#0f172a;border-color:var(--accent);font-weight:600}
+.country-btn .flag{font-size:1.1rem}
+
+/* Controls */
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:.75rem;margin-bottom:1.5rem}
+.control-group{background:var(--surface);border-radius:10px;padding:1rem;border:1px solid var(--border)}
+.control-group h3{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--accent);margin-bottom:.6rem}
+.control-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem}
+.control-row label{font-size:.85rem;color:var(--muted);flex-shrink:0}
+.control-row .value{font-weight:600;min-width:70px;text-align:right;font-size:.85rem}
+input[type="range"]{width:100%;margin:.2rem 0 .6rem;accent-color:var(--accent)}
+select{background:var(--surface2);color:var(--text);border:1px solid var(--border);padding:.4rem .6rem;border-radius:6px;font-size:.9rem;width:100%;cursor:pointer}
+
+/* Insight cards */
+.insights{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.75rem;margin-bottom:1.5rem}
+.insight-card{background:var(--surface);border-radius:10px;padding:1rem;border:1px solid var(--border);text-align:center}
+.insight-card .label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.insight-card .big{font-size:1.5rem;font-weight:700;margin:.15rem 0}
+.insight-card .sub{font-size:.78rem;color:var(--muted)}
+.ev-color{color:var(--ev)}.ice-color{color:var(--ice)}.hybrid-color{color:var(--hybrid)}
+
+/* Charts */
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem}
+@media(max-width:900px){.chart-grid{grid-template-columns:1fr}}
+.chart-box{background:var(--surface);border-radius:10px;padding:1.25rem;border:1px solid var(--border)}
+.chart-box.full{grid-column:1/-1}
+.chart-box h3{font-size:.9rem;margin-bottom:.75rem}
+
+/* Tables */
+.table-section{background:var(--surface);border-radius:10px;padding:1.25rem;border:1px solid var(--border);margin-bottom:1.25rem;overflow-x:auto}
+.table-section h3{font-size:.9rem;margin-bottom:.75rem}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th,td{padding:.45rem .6rem;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap}
+th{color:var(--muted);font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.03em;position:sticky;top:0;background:var(--surface)}
+th:first-child,td:first-child{text-align:left}
+tr:hover td{background:rgba(56,189,248,.04)}
+.winner{background:rgba(16,185,129,.08)}
+
+/* Cross-country comparison */
+.compare-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.75rem;margin-bottom:1.5rem}
+.compare-card{background:var(--surface);border-radius:10px;padding:1rem;border:1px solid var(--border);text-align:center;cursor:pointer;transition:all .2s}
+.compare-card:hover{border-color:var(--accent)}
+.compare-card .cflag{font-size:2rem}
+.compare-card .cname{font-size:.85rem;font-weight:600;margin:.3rem 0}
+.compare-card .cdata{font-size:.75rem;color:var(--muted)}
+.compare-card .cval{font-size:1.1rem;font-weight:700;margin:.2rem 0}
+
+/* Factors */
+.factors{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:.75rem;margin-bottom:1.5rem}
+.factor-card{background:var(--surface);border-radius:10px;padding:1rem;border:1px solid var(--border)}
+.factor-card h4{color:var(--accent);margin-bottom:.4rem;font-size:.9rem}
+.factor-card p{color:var(--muted);font-size:.82rem}
+.sensitivity-bar{height:5px;background:var(--surface2);border-radius:3px;margin-top:.6rem;overflow:hidden}
+.sensitivity-fill{height:100%;border-radius:3px}
+
+/* Policy table */
+.policy-table td,.policy-table th{font-size:.78rem;padding:.5rem .6rem}
+.policy-table .good{color:#10b981}.policy-table .moderate{color:#f59e0b}.policy-table .poor{color:#ef4444}
+
+footer{text-align:center;padding:1.5rem;color:var(--muted);font-size:.75rem;border-top:1px solid var(--border)}
+footer a{color:var(--accent);text-decoration:none}
+
+.tabs{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap}
+.tab-btn{padding:.4rem .9rem;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:.85rem}
+.tab-btn.active{background:var(--accent);color:#0f172a;font-weight:600;border-color:var(--accent)}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>ASEAN + Taiwan — EV Total Cost of Ownership</h1>
+  <p>Compare EV, ICE, and Hybrid ownership costs across 9 markets. Find when switching to EV makes sense for drivers and fleet owners.</p>
+</div>
+
+<!-- Country selector -->
+<div class="country-bar" id="countryBar"></div>
+
+<div class="container">
+  <!-- Mode tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" data-mode="single" onclick="setMode('single',this)">Single Country Analysis</button>
+    <button class="tab-btn" data-mode="compare" onclick="setMode('compare',this)">Cross-Country Comparison</button>
+  </div>
+
+  <!-- ========== SINGLE COUNTRY MODE ========== -->
+  <div id="singleMode">
+    <h2 class="section-title" id="countryTitle">Thailand</h2>
+
+    <!-- Controls -->
+    <div class="controls">
+      <div class="control-group">
+        <h3>Location & Use Case</h3>
+        <label>City / Region</label>
+        <select id="city"></select>
+        <div style="margin-top:.6rem"><label>Use Case</label>
+          <select id="usecase">
+            <option value="personal">Personal Driver</option>
+            <option value="taxi">Taxi / Ride-hail</option>
+            <option value="fleet">Fleet (Delivery / Logistics)</option>
+          </select>
+        </div>
+        <div style="margin-top:.6rem"><label>Vehicle Segment</label>
+          <select id="segment">
+            <option value="compact">Compact Sedan / Hatchback</option>
+            <option value="midsize">Mid-size Sedan</option>
+            <option value="suv">SUV / Crossover</option>
+          </select>
+        </div>
+      </div>
+      <div class="control-group">
+        <h3>Driving & Energy</h3>
+        <div class="control-row"><label>Annual km driven</label><span class="value" id="kmVal">15,000</span></div>
+        <input type="range" id="annualKm" min="5000" max="80000" step="1000" value="15000">
+        <div class="control-row"><label>Gasoline price</label><span class="value" id="gasVal">—</span></div>
+        <input type="range" id="gasPrice" min="0.3" max="4" step="0.01" value="1.14">
+        <div class="control-row"><label>Electricity — home</label><span class="value" id="elecHomeVal">—</span></div>
+        <input type="range" id="elecHome" min="0.01" max="0.5" step="0.005" value="0.13">
+        <div class="control-row"><label>Electricity — public DC</label><span class="value" id="elecPubVal">—</span></div>
+        <input type="range" id="elecPub" min="0.05" max="0.8" step="0.005" value="0.20">
+        <div class="control-row"><label>Home charging ratio</label><span class="value" id="homeRatioVal">70%</span></div>
+        <input type="range" id="homeRatio" min="0" max="100" step="5" value="70">
+      </div>
+      <div class="control-group">
+        <h3>Financial</h3>
+        <div class="control-row"><label>Ownership period (years)</label><span class="value" id="yearsVal">10</span></div>
+        <input type="range" id="ownerYears" min="3" max="15" step="1" value="10">
+        <div class="control-row"><label>EV government subsidy (USD)</label><span class="value" id="subsidyVal">—</span></div>
+        <input type="range" id="evSubsidy" min="0" max="20000" step="500" value="2800">
+        <div class="control-row"><label>Loan interest rate</label><span class="value" id="interestVal">4%</span></div>
+        <input type="range" id="interestRate" min="0" max="12" step="0.25" value="4">
+        <div class="control-row"><label>Annual fuel price increase</label><span class="value" id="fuelInflVal">3%</span></div>
+        <input type="range" id="fuelInflation" min="0" max="10" step="0.5" value="3">
+      </div>
+      <div class="control-group">
+        <h3>Residual & Depreciation</h3>
+        <div class="control-row"><label>EV residual at end (%)</label><span class="value" id="evResidVal">40%</span></div>
+        <input type="range" id="evResid" min="10" max="70" step="1" value="40">
+        <div class="control-row"><label>ICE residual at end (%)</label><span class="value" id="iceResidVal">45%</span></div>
+        <input type="range" id="iceResid" min="10" max="70" step="1" value="45">
+        <div class="control-row"><label>Hybrid residual at end (%)</label><span class="value" id="hybResidVal">42%</span></div>
+        <input type="range" id="hybResid" min="10" max="70" step="1" value="42">
+        <div class="control-row"><label>Battery degradation/yr</label><span class="value" id="battDegVal">2%</span></div>
+        <input type="range" id="battDeg" min="0.5" max="5" step="0.25" value="2">
+      </div>
+    </div>
+
+    <!-- Insight cards -->
+    <div class="insights">
+      <div class="insight-card"><div class="label">EV Breakeven vs ICE</div><div class="big ev-color" id="breakeven">—</div><div class="sub" id="breakevenSub">—</div></div>
+      <div class="insight-card"><div class="label">Total Savings (EV vs ICE)</div><div class="big ev-color" id="savings">—</div><div class="sub">Over ownership period</div></div>
+      <div class="insight-card"><div class="label">Monthly Energy Cost</div><div class="big" id="monthlyFuel">—</div><div class="sub" id="monthlyFuelSub">—</div></div>
+      <div class="insight-card"><div class="label">Best Option</div><div class="big" id="bestOption">—</div><div class="sub" id="bestOptionSub">—</div></div>
+      <div class="insight-card"><div class="label">Cost per km</div><div class="big" id="costKm">—</div><div class="sub" id="costKmSub">—</div></div>
+    </div>
+
+    <!-- Charts -->
+    <div class="chart-grid">
+      <div class="chart-box full"><h3>Cumulative Net TCO (USD)</h3><canvas id="tcoChart" height="90"></canvas></div>
+      <div class="chart-box"><h3>Annual Running Costs — Year 1</h3><canvas id="breakdownChart" height="150"></canvas></div>
+      <div class="chart-box"><h3>Cost per Kilometer (USD/km)</h3><canvas id="costPerKmChart" height="150"></canvas></div>
+      <div class="chart-box full"><h3>Residual Value Over Time (USD)</h3><canvas id="residualChart" height="75"></canvas></div>
+    </div>
+
+    <!-- Tables -->
+    <div class="table-section"><h3>Year-by-Year Net TCO</h3><div id="tcoTable"></div></div>
+    <div class="table-section"><h3>Year 1 Annual Cost Breakdown</h3><div id="annualTable"></div></div>
+
+    <!-- Sensitivity -->
+    <h2 class="section-title">Sensitivity Analysis</h2>
+    <div class="chart-grid"><div class="chart-box full"><h3>Impact on EV vs ICE Savings (+20% change)</h3><canvas id="sensitivityChart" height="70"></canvas></div></div>
+  </div>
+
+  <!-- ========== COMPARE MODE ========== -->
+  <div id="compareMode" style="display:none">
+    <h2 class="section-title">Cross-Country Comparison (USD, Compact Sedan, 10yr Personal)</h2>
+    <div class="compare-grid" id="compareCards"></div>
+    <div class="chart-grid">
+      <div class="chart-box full"><h3>10-Year Net TCO by Country (USD)</h3><canvas id="compareChart" height="100"></canvas></div>
+      <div class="chart-box"><h3>EV Breakeven Year by Country</h3><canvas id="breakevenChart" height="150"></canvas></div>
+      <div class="chart-box"><h3>Energy Cost Ratio (Electricity vs Gasoline)</h3><canvas id="energyRatioChart" height="150"></canvas></div>
+    </div>
+
+    <!-- Policy comparison -->
+    <div class="table-section">
+      <h3>EV Policy & Market Comparison</h3>
+      <div id="policyTable"></div>
+    </div>
+  </div>
+
+  <!-- Key Factors -->
+  <h2 class="section-title">Key Factors Driving EV Transition</h2>
+  <div class="factors" id="factorsContainer"></div>
+</div>
+
+<footer>
+  <p>Data: 2024-2026 estimates from IEA, GlobalPetrolPrices, government sources, manufacturer websites.<br>
+  All prices approximate. Not financial advice. Sources:
+  <a href="https://www.iea.org/reports/global-ev-outlook-2025/trends-in-electric-car-markets-2">IEA Global EV Outlook</a> |
+  <a href="https://www.globalpetrolprices.com/">GlobalPetrolPrices</a> |
+  <a href="https://cleantechnica.com/2026/03/10/how-are-prices-of-gas-diesel-in-asean-and-where-do-we-go-from-here/">CleanTechnica ASEAN</a> |
+  <a href="https://www.mordorintelligence.com/industry-reports/asean-electric-vehicle-market">Mordor Intelligence</a>
+  </p>
+</footer>
+
+<script>
+// ============================================================
+// COUNTRY DATA — 9 markets, all prices in USD
+// ============================================================
+const COUNTRIES = {
+  thailand: {
+    name: 'Thailand', flag: '\u{1F1F9}\u{1F1ED}', currency: 'THB', rate: 35,
+    gasoline: 1.14, diesel: 0.90, elecHome: 0.13, elecPub: 0.20,
+    evShare: 21, evSubsidy: 2860, interest: 3.5, fuelInflation: 3,
+    avgKm: 15000, chargers: 12000, chargingScore: 0.75,
+    evResid: 40, iceResid: 48, hybResid: 44,
+    cities: [
+      { id:'bangkok',   name:'Bangkok',    fMult:1.0,  eMult:1.0,  kMult:1.0,  chg:0.9 },
+      { id:'chiangmai', name:'Chiang Mai', fMult:1.02, eMult:0.98, kMult:0.8,  chg:0.6 },
+      { id:'phuket',    name:'Phuket',     fMult:1.03, eMult:1.01, kMult:0.85, chg:0.5 },
+      { id:'pattaya',   name:'Pattaya',    fMult:1.01, eMult:1.0,  kMult:0.9,  chg:0.7 },
+      { id:'khonkaen',  name:'Khon Kaen',  fMult:1.01, eMult:0.97, kMult:0.7,  chg:0.4 },
+    ],
+    vehicles: {
+      compact: {
+        ev: { name:'BYD Dolphin/Atto 3', price:20000, eff:6.5, maint:170, ins:510, tax:43 },
+        ice: { name:'Toyota Yaris Ativ', price:16000, kmpl:16, maint:510, ins:400, tax:57 },
+        hybrid: { name:'Honda City e:HEV', price:21400, kmpl:24, maint:400, ins:460, tax:51 },
+      },
+      midsize: {
+        ev: { name:'BYD Seal/Tesla M3', price:31400, eff:6.0, maint:200, ins:800, tax:43 },
+        ice: { name:'Toyota Camry 2.0', price:34300, kmpl:14, maint:630, ins:690, tax:129 },
+        hybrid: { name:'Toyota Camry HEV', price:41400, kmpl:22, maint:490, ins:740, tax:100 },
+      },
+      suv: {
+        ev: { name:'BYD Seal U', price:28600, eff:5.5, maint:230, ins:740, tax:43 },
+        ice: { name:'Toyota Fortuner', price:40000, kmpl:11, maint:710, ins:800, tax:171 },
+        hybrid: { name:'Honda CR-V e:HEV', price:44300, kmpl:18, maint:510, ins:770, tax:114 },
+      },
+    },
+    policy: { subsidy:'Up to \u0E3F150K (~$4.3K)', duty:'Reduced import/excise for EV', roadTax:'Weight-based for EV (lower)', registration:'Normal', charging:'12,000+ public chargers, growing fast', notes:'EV3.5 policy from 2024; local assembly by BYD, MG, Tesla planned' },
+  },
+  vietnam: {
+    name: 'Vietnam', flag: '\u{1F1FB}\u{1F1F3}', currency: 'VND', rate: 25400,
+    gasoline: 0.96, diesel: 0.99, elecHome: 0.084, elecPub: 0.15,
+    evShare: 18, evSubsidy: 1200, interest: 7, fuelInflation: 4,
+    avgKm: 12000, chargers: 150000, chargingScore: 0.85,
+    evResid: 35, iceResid: 50, hybResid: 45,
+    cities: [
+      { id:'hanoi',  name:'Hanoi',     fMult:1.0,  eMult:1.0,  kMult:1.0,  chg:0.9 },
+      { id:'hcmc',   name:'Ho Chi Minh City', fMult:1.0, eMult:1.0, kMult:1.1, chg:0.9 },
+      { id:'danang', name:'Da Nang',   fMult:1.01, eMult:0.98, kMult:0.8,  chg:0.6 },
+      { id:'haiphong',name:'Hai Phong', fMult:1.01, eMult:0.99, kMult:0.75, chg:0.5 },
+    ],
+    vehicles: {
+      compact: {
+        ev: { name:'VinFast VF5 / Wuling', price:12000, eff:7.0, maint:140, ins:350, tax:30 },
+        ice: { name:'Toyota Vios', price:19500, kmpl:15, maint:420, ins:320, tax:80 },
+        hybrid: { name:'Honda City e:HEV', price:24000, kmpl:24, maint:350, ins:360, tax:60 },
+      },
+      midsize: {
+        ev: { name:'VinFast VF8', price:33000, eff:5.2, maint:200, ins:600, tax:30 },
+        ice: { name:'Toyota Camry', price:38000, kmpl:13, maint:520, ins:550, tax:120 },
+        hybrid: { name:'Honda Accord HEV', price:42000, kmpl:20, maint:430, ins:580, tax:90 },
+      },
+      suv: {
+        ev: { name:'VinFast VF9', price:50000, eff:4.5, maint:250, ins:800, tax:30 },
+        ice: { name:'Toyota Fortuner', price:42000, kmpl:10, maint:600, ins:700, tax:150 },
+        hybrid: { name:'Honda CR-V HEV', price:46000, kmpl:17, maint:480, ins:650, tax:110 },
+      },
+    },
+    policy: { subsidy:'Registration fee exemption (~$1.2K)', duty:'0% registration tax for EV through 2027', roadTax:'50% reduction for EV', registration:'Free registration for EV', charging:'150K+ VinFast chargers (largest ASEAN network)', notes:'VinFast dominates; massive charging buildout' },
+  },
+  indonesia: {
+    name: 'Indonesia', flag: '\u{1F1EE}\u{1F1E9}', currency: 'IDR', rate: 15900,
+    gasoline: 0.78, diesel: 0.52, elecHome: 0.086, elecPub: 0.16,
+    evShare: 13, evSubsidy: 4400, interest: 6, fuelInflation: 3,
+    avgKm: 12000, chargers: 4500, chargingScore: 0.45,
+    evResid: 35, iceResid: 50, hybResid: 45,
+    cities: [
+      { id:'jakarta',  name:'Jakarta',    fMult:1.0,  eMult:1.0,  kMult:1.0,  chg:0.7 },
+      { id:'surabaya', name:'Surabaya',   fMult:0.98, eMult:0.98, kMult:0.85, chg:0.4 },
+      { id:'bandung',  name:'Bandung',    fMult:0.98, eMult:0.97, kMult:0.8,  chg:0.35 },
+      { id:'bali',     name:'Bali',       fMult:1.02, eMult:1.0,  kMult:0.7,  chg:0.5 },
+    ],
+    vehicles: {
+      compact: {
+        ev: { name:'Wuling Air EV / BYD Atto 1', price:12200, eff:7.5, maint:130, ins:280, tax:25 },
+        ice: { name:'Toyota Avanza/Agya', price:11500, kmpl:15, maint:380, ins:250, tax:50 },
+        hybrid: { name:'Toyota Yaris Cross HEV', price:18000, kmpl:22, maint:320, ins:300, tax:40 },
+      },
+      midsize: {
+        ev: { name:'BYD Dolphin/Seal', price:24500, eff:6.0, maint:180, ins:480, tax:25 },
+        ice: { name:'Toyota Camry', price:30000, kmpl:13, maint:500, ins:420, tax:90 },
+        hybrid: { name:'Toyota Camry HEV', price:35000, kmpl:21, maint:400, ins:460, tax:70 },
+      },
+      suv: {
+        ev: { name:'Hyundai Ioniq 5', price:49700, eff:5.5, maint:220, ins:700, tax:25 },
+        ice: { name:'Toyota Fortuner', price:32000, kmpl:10, maint:550, ins:550, tax:130 },
+        hybrid: { name:'Honda CR-V HEV', price:38000, kmpl:17, maint:440, ins:500, tax:100 },
+      },
+    },
+    policy: { subsidy:'IDR 70M (~$4.4K) for local-assembled EV', duty:'0% import duty + 0% luxury goods tax for EV', roadTax:'EV exempt from annual tax', registration:'Reduced transfer tax for EV', charging:'~4,500 chargers; BYD factory coming 2025', notes:'Strong incentives for locally assembled EVs; Wuling dominates budget segment' },
+  },
+  malaysia: {
+    name: 'Malaysia', flag: '\u{1F1F2}\u{1F1FE}', currency: 'MYR', rate: 4.45,
+    gasoline: 0.47, diesel: 0.50, elecHome: 0.10, elecPub: 0.18,
+    evShare: 4, evSubsidy: 0, interest: 3.5, fuelInflation: 5,
+    avgKm: 15000, chargers: 3000, chargingScore: 0.5,
+    evResid: 38, iceResid: 52, hybResid: 48,
+    cities: [
+      { id:'kl',       name:'Kuala Lumpur', fMult:1.0,  eMult:1.0,  kMult:1.0,  chg:0.7 },
+      { id:'penang',   name:'Penang',       fMult:1.0,  eMult:1.0,  kMult:0.85, chg:0.5 },
+      { id:'jb',       name:'Johor Bahru',  fMult:1.0,  eMult:1.0,  kMult:0.9,  chg:0.55 },
+      { id:'ipoh',     name:'Ipoh',         fMult:1.0,  eMult:0.98, kMult:0.7,  chg:0.35 },
+    ],
+    vehicles: {
+      compact: {
+        ev: { name:'BYD Atto 3 / Dolphin', price:27800, eff:6.5, maint:160, ins:500, tax:20 },
+        ice: { name:'Proton X50 / Honda City', price:18000, kmpl:15, maint:400, ins:380, tax:80 },
+        hybrid: { name:'Honda City e:HEV', price:22500, kmpl:24, maint:340, ins:430, tax:60 },
+      },
+      midsize: {
+        ev: { name:'Tesla Model 3', price:38000, eff:6.0, maint:190, ins:750, tax:20 },
+        ice: { name:'Toyota Camry', price:34000, kmpl:14, maint:490, ins:600, tax:130 },
+        hybrid: { name:'Toyota Camry HEV', price:38000, kmpl:22, maint:400, ins:650, tax:100 },
+      },
+      suv: {
+        ev: { name:'Tesla Model Y', price:43800, eff:5.5, maint:220, ins:800, tax:20 },
+        ice: { name:'Proton X70', price:27000, kmpl:12, maint:480, ins:520, tax:120 },
+        hybrid: { name:'Honda CR-V e:HEV', price:38000, kmpl:18, maint:400, ins:600, tax:90 },
+      },
+    },
+    policy: { subsidy:'No direct cash subsidy', duty:'Full import/excise duty exemption for EV through 2027', roadTax:'EV road tax based on kW (very low ~RM20-50)', registration:'Exempt from registration tax', charging:'~3,000 chargers; growing', notes:'RON 95 gasoline heavily subsidized at RM2.05/L — makes ICE artificially cheap. Subsidy reform would change TCO dramatically.' },
+  },
+  singapore: {
+    name: 'Singapore', flag: '\u{1F1F8}\u{1F1EC}', currency: 'SGD', rate: 1.35,
+    gasoline: 2.10, diesel: 2.00, elecHome: 0.22, elecPub: 0.48,
+    evShare: 40, evSubsidy: 11000, interest: 2.5, fuelInflation: 2,
+    avgKm: 12000, chargers: 5000, chargingScore: 0.9,
+    evResid: 30, iceResid: 35, hybResid: 32,
+    cities: [
+      { id:'sg', name:'Singapore', fMult:1.0, eMult:1.0, kMult:1.0, chg:0.95 },
+    ],
+    vehicles: {
+      compact: {
+        ev: { name:'BYD Atto 3', price:126000, eff:6.5, maint:450, ins:2200, tax:550 },
+        ice: { name:'Toyota Corolla Cross', price:118000, kmpl:15, maint:900, ins:2000, tax:750 },
+        hybrid: { name:'Toyota Corolla Cross HEV', price:125000, kmpl:24, maint:750, ins:2100, tax:600 },
+      },
+      midsize: {
+        ev: { name:'Tesla Model 3', price:145000, eff:6.0, maint:550, ins:2800, tax:700 },
+        ice: { name:'BMW 318i', price:158000, kmpl:13, maint:1200, ins:2600, tax:1100 },
+        hybrid: { name:'Toyota Camry HEV', price:155000, kmpl:22, maint:900, ins:2500, tax:850 },
+      },
+      suv: {
+        ev: { name:'Tesla Model Y', price:155000, eff:5.5, maint:600, ins:3000, tax:750 },
+        ice: { name:'Toyota RAV4', price:150000, kmpl:12, maint:1100, ins:2800, tax:1200 },
+        hybrid: { name:'Toyota RAV4 HEV', price:158000, kmpl:19, maint:850, ins:2700, tax:900 },
+      },
+    },
+    policy: { subsidy:'EEAI up to S$45K ARF rebate; S$25K VES rebate', duty:'ARF + COE applies to all cars (EV gets rebate)', roadTax:'Power-based + S$700/yr surcharge for EV', registration:'COE required (~S$90K+ in 2025)', charging:'5,000+ chargers; target 60K by 2030', notes:'Highest car prices globally due to COE/ARF. But EV rebates significant. 40% EV share shows TCO works despite high prices.' },
+  },
+  philippines: {
+    name: 'Philippines', flag: '\u{1F1F5}\u{1F1ED}', currency: 'PHP', rate: 57,
+    gasoline: 1.08, diesel: 0.93, elecHome: 0.23, elecPub: 0.35,
+    evShare: 1.5, evSubsidy: 0, interest: 6, fuelInflation: 4,
+    avgKm: 12000, chargers: 500, chargingScore: 0.2,
+    evResid: 30, iceResid: 50, hybResid: 45,
+    cities: [
+      { id:'manila', name:'Metro Manila', fMult:1.0,  eMult:1.0,  kMult:1.0,  chg:0.4 },
+      { id:'cebu',   name:'Cebu',         fMult:1.02, eMult:1.02, kMult:0.8,  chg:0.2 },
+      { id:'davao',  name:'Davao',        fMult:1.01, eMult:1.01, kMult:0.7,  chg:0.15 },
+    ],
+    vehicles: {
+      compact: {
+        ev: { name:'BYD Seagull / Dolphin', price:15800, eff:7.0, maint:150, ins:380, tax:40 },
+        ice: { name:'Toyota Vios', price:14000, kmpl:15, maint:420, ins:320, tax:60 },
+        hybrid: { name:'Toyota Yaris Cross HEV', price:22000, kmpl:23, maint:350, ins:350, tax:50 },
+      },
+      midsize: {
+        ev: { name:'BYD Seal', price:35000, eff:6.0, maint:200, ins:600, tax:40 },
+        ice: { name:'Toyota Camry', price:32000, kmpl:13, maint:520, ins:500, tax:100 },
+        hybrid: { name:'Toyota Camry HEV', price:37000, kmpl:21, maint:420, ins:550, tax:80 },
+      },
+      suv: {
+        ev: { name:'BYD Atto 3', price:33000, eff:5.5, maint:220, ins:650, tax:40 },
+        ice: { name:'Toyota Fortuner', price:35000, kmpl:10, maint:550, ins:580, tax:130 },
+        hybrid: { name:'Honda CR-V HEV', price:40000, kmpl:17, maint:440, ins:540, tax:100 },
+      },
+    },
+    policy: { subsidy:'No direct cash subsidy', duty:'EVIDA law: zero tariff on EV imports through 2028', roadTax:'EV exempt from excise tax', registration:'Reduced registration for EV', charging:'~500 chargers; very limited', notes:'EVIDA Act passed 2022 but slow implementation. High electricity costs (most expensive in ASEAN) hurt EV economics. Very low EV adoption.' },
+  },
+  cambodia: {
+    name: 'Cambodia', flag: '\u{1F1F0}\u{1F1ED}', currency: 'USD', rate: 1,
+    gasoline: 1.25, diesel: 1.05, elecHome: 0.152, elecPub: 0.25,
+    evShare: 0.8, evSubsidy: 0, interest: 8, fuelInflation: 3,
+    avgKm: 10000, chargers: 200, chargingScore: 0.15,
+    evResid: 30, iceResid: 55, hybResid: 48,
+    cities: [
+      { id:'phnompenh', name:'Phnom Penh',     fMult:1.0,  eMult:1.0,  kMult:1.0, chg:0.3 },
+      { id:'siemreap',  name:'Siem Reap',      fMult:1.03, eMult:1.05, kMult:0.6, chg:0.1 },
+    ],
+    vehicles: {
+      compact: {
+        ev: { name:'BYD Dolphin / MG4', price:25000, eff:6.5, maint:160, ins:400, tax:50 },
+        ice: { name:'Toyota Vios', price:20000, kmpl:15, maint:380, ins:350, tax:60 },
+        hybrid: { name:'Honda City e:HEV', price:28000, kmpl:23, maint:320, ins:380, tax:55 },
+      },
+      midsize: {
+        ev: { name:'BYD Seal', price:42000, eff:6.0, maint:200, ins:600, tax:50 },
+        ice: { name:'Toyota Camry', price:38000, kmpl:13, maint:500, ins:520, tax:100 },
+        hybrid: { name:'Toyota Camry HEV', price:44000, kmpl:21, maint:400, ins:560, tax:80 },
+      },
+      suv: {
+        ev: { name:'BYD Atto 3', price:38000, eff:5.5, maint:230, ins:650, tax:50 },
+        ice: { name:'Toyota Fortuner', price:45000, kmpl:10, maint:550, ins:600, tax:130 },
+        hybrid: { name:'Honda CR-V HEV', price:48000, kmpl:17, maint:440, ins:580, tax:100 },
+      },
+    },
+    policy: { subsidy:'None', duty:'Special economic zone imports possible', roadTax:'Minimal', registration:'Standard fees', charging:'~200 chargers in Phnom Penh only', notes:'Nascent market ~13K registered EVs. Mostly Chinese imports. High electricity cost and limited infra are barriers.' },
+  },
+  myanmar: {
+    name: 'Myanmar', flag: '\u{1F1F2}\u{1F1F2}', currency: 'MMK', rate: 3300,
+    gasoline: 0.84, diesel: 0.80, elecHome: 0.023, elecPub: 0.10,
+    evShare: 0.3, evSubsidy: 0, interest: 10, fuelInflation: 8,
+    avgKm: 8000, chargers: 50, chargingScore: 0.05,
+    evResid: 25, iceResid: 55, hybResid: 48,
+    cities: [
+      { id:'yangon',   name:'Yangon',     fMult:1.0,  eMult:1.0,  kMult:1.0, chg:0.1 },
+      { id:'mandalay', name:'Mandalay',   fMult:1.02, eMult:1.05, kMult:0.7, chg:0.03 },
+    ],
+    vehicles: {
+      compact: {
+        ev: { name:'Chinese imports (BYD/MG)', price:28000, eff:6.5, maint:150, ins:350, tax:40 },
+        ice: { name:'Suzuki Ciaz / Toyota', price:15000, kmpl:16, maint:300, ins:250, tax:50 },
+        hybrid: { name:'Toyota Yaris HEV (import)', price:25000, kmpl:24, maint:280, ins:300, tax:45 },
+      },
+      midsize: {
+        ev: { name:'BYD Seal (import)', price:45000, eff:6.0, maint:200, ins:500, tax:40 },
+        ice: { name:'Toyota Camry (import)', price:35000, kmpl:13, maint:400, ins:400, tax:80 },
+        hybrid: { name:'Toyota Camry HEV', price:40000, kmpl:21, maint:350, ins:450, tax:65 },
+      },
+      suv: {
+        ev: { name:'BYD Atto 3 (import)', price:42000, eff:5.5, maint:220, ins:550, tax:40 },
+        ice: { name:'Toyota Fortuner', price:38000, kmpl:10, maint:450, ins:450, tax:110 },
+        hybrid: { name:'Honda CR-V HEV', price:44000, kmpl:17, maint:380, ins:480, tax:85 },
+      },
+    },
+    policy: { subsidy:'None', duty:'Import duties apply; 87 licensed EV companies', roadTax:'Standard', registration:'Standard', charging:'<50 chargers; unreliable electricity grid', notes:'Political instability limits investment. Very cheap electricity but unreliable grid. 87 companies licensed but actual deployments limited.' },
+  },
+  taiwan: {
+    name: 'Taiwan', flag: '\u{1F1F9}\u{1F1FC}', currency: 'TWD', rate: 32.5,
+    gasoline: 0.96, diesel: 0.84, elecHome: 0.10, elecPub: 0.22,
+    evShare: 9, evSubsidy: 2500, interest: 3, fuelInflation: 2,
+    avgKm: 12000, chargers: 14000, chargingScore: 0.7,
+    evResid: 38, iceResid: 50, hybResid: 46,
+    cities: [
+      { id:'taipei',     name:'Taipei',      fMult:1.0,  eMult:1.0,  kMult:1.0,  chg:0.85 },
+      { id:'taichung',   name:'Taichung',    fMult:0.99, eMult:0.98, kMult:0.9,  chg:0.6 },
+      { id:'kaohsiung',  name:'Kaohsiung',   fMult:0.99, eMult:0.98, kMult:0.85, chg:0.55 },
+      { id:'tainan',     name:'Tainan',      fMult:0.99, eMult:0.97, kMult:0.8,  chg:0.5 },
+    ],
+    vehicles: {
+      compact: {
+        ev: { name:'MG4 / Nissan Leaf', price:30000, eff:6.5, maint:200, ins:600, tax:0 },
+        ice: { name:'Toyota Yaris / Honda Fit', price:23000, kmpl:17, maint:450, ins:500, tax:180 },
+        hybrid: { name:'Toyota Corolla Cross HEV', price:28000, kmpl:25, maint:380, ins:550, tax:120 },
+      },
+      midsize: {
+        ev: { name:'Tesla Model 3', price:47000, eff:6.0, maint:250, ins:850, tax:0 },
+        ice: { name:'Toyota Camry', price:35000, kmpl:14, maint:520, ins:700, tax:250 },
+        hybrid: { name:'Toyota Camry HEV', price:38000, kmpl:22, maint:420, ins:750, tax:170 },
+      },
+      suv: {
+        ev: { name:'Tesla Model Y / bZ4X', price:45000, eff:5.5, maint:270, ins:900, tax:0 },
+        ice: { name:'Toyota RAV4', price:32000, kmpl:12, maint:500, ins:650, tax:220 },
+        hybrid: { name:'Toyota RAV4 HEV', price:37000, kmpl:19, maint:420, ins:700, tax:150 },
+      },
+    },
+    policy: { subsidy:'Commodity tax exemption (~NT$70-140K); local subsidies vary', duty:'Commodity tax + vehicle license tax waived for EV until 2030', roadTax:'EV exempt from fuel tax + license plate tax', registration:'Standard', charging:'14,000+ public chargers; Tesla Supercharger network strong', notes:'Tax breaks extended to 2030. Tesla dominates with 58% EV share. EV sales dipped 17% in 2025 as subsidies plateau.' },
+  },
+};
+
+const USECASE = {
+  personal: { kmMult:1.0, homeChargeMult:1.0, maintMult:1.0 },
+  taxi:     { kmMult:3.0, homeChargeMult:0.6, maintMult:1.8 },
+  fleet:    { kmMult:2.5, homeChargeMult:0.5, maintMult:1.5 },
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let currentCountry = 'thailand';
+let currentMode = 'single';
+
+// DOM helpers
+const $ = id => document.getElementById(id);
+const fmt$ = n => '$' + Math.round(n).toLocaleString();
+const fmtL = (n, c) => {
+  const cc = COUNTRIES[c] || COUNTRIES[currentCountry];
+  return cc.currency === 'USD' ? '$' + Math.round(n).toLocaleString() : cc.currency + ' ' + Math.round(n * cc.rate).toLocaleString();
+};
+
+// ============================================================
+// COUNTRY BAR
+// ============================================================
+function buildCountryBar() {
+  const bar = $('countryBar');
+  bar.innerHTML = Object.entries(COUNTRIES).map(([k, v]) =>
+    `<button class="country-btn${k === currentCountry ? ' active' : ''}" data-c="${k}">
+      <span class="flag">${v.flag}</span>${v.name}
+    </button>`
+  ).join('');
+  bar.querySelectorAll('.country-btn').forEach(btn => {
+    btn.onclick = () => { selectCountry(btn.dataset.c); };
+  });
+}
+
+function selectCountry(c) {
+  currentCountry = c;
+  const cc = COUNTRIES[c];
+  // Update UI
+  document.querySelectorAll('.country-btn').forEach(b => b.classList.toggle('active', b.dataset.c === c));
+  $('countryTitle').textContent = cc.flag + ' ' + cc.name;
+
+  // Update city selector
+  const cityEl = $('city');
+  cityEl.innerHTML = cc.cities.map(ci => `<option value="${ci.id}">${ci.name}</option>`).join('');
+
+  // Update slider defaults
+  $('gasPrice').value = cc.gasoline; $('gasPrice').min = Math.max(0.1, cc.gasoline * 0.5); $('gasPrice').max = cc.gasoline * 2.5;
+  $('elecHome').value = cc.elecHome; $('elecHome').min = cc.elecHome * 0.3; $('elecHome').max = cc.elecHome * 3;
+  $('elecPub').value = cc.elecPub; $('elecPub').min = cc.elecPub * 0.3; $('elecPub').max = cc.elecPub * 3;
+  $('annualKm').value = cc.avgKm;
+  $('evSubsidy').value = cc.evSubsidy; $('evSubsidy').max = Math.max(20000, cc.evSubsidy * 3);
+  $('interestRate').value = cc.interest;
+  $('fuelInflation').value = cc.fuelInflation;
+  $('evResid').value = cc.evResid;
+  $('iceResid').value = cc.iceResid;
+  $('hybResid').value = cc.hybResid;
+
+  updateSliderDisplays();
+  render();
+}
+
+// ============================================================
+// SLIDER WIRING
+// ============================================================
+const sliderDefs = [
+  { id:'annualKm', disp:'kmVal', fmt: v => Number(v).toLocaleString() },
+  { id:'gasPrice', disp:'gasVal', fmt: v => '$' + Number(v).toFixed(2) + '/L' },
+  { id:'elecHome', disp:'elecHomeVal', fmt: v => '$' + Number(v).toFixed(3) + '/kWh' },
+  { id:'elecPub', disp:'elecPubVal', fmt: v => '$' + Number(v).toFixed(3) + '/kWh' },
+  { id:'homeRatio', disp:'homeRatioVal', fmt: v => v + '%' },
+  { id:'ownerYears', disp:'yearsVal', fmt: v => v },
+  { id:'evSubsidy', disp:'subsidyVal', fmt: v => '$' + Number(v).toLocaleString() },
+  { id:'interestRate', disp:'interestVal', fmt: v => v + '%' },
+  { id:'fuelInflation', disp:'fuelInflVal', fmt: v => v + '%' },
+  { id:'evResid', disp:'evResidVal', fmt: v => v + '%' },
+  { id:'iceResid', disp:'iceResidVal', fmt: v => v + '%' },
+  { id:'hybResid', disp:'hybResidVal', fmt: v => v + '%' },
+  { id:'battDeg', disp:'battDegVal', fmt: v => v + '%' },
+];
+
+function updateSliderDisplays() {
+  sliderDefs.forEach(s => { $(s.disp).textContent = s.fmt($(s.id).value); });
+}
+
+function wireSliders() {
+  sliderDefs.forEach(s => {
+    $(s.id).addEventListener('input', () => { $(s.disp).textContent = s.fmt($(s.id).value); render(); });
+  });
+  $('city').addEventListener('change', render);
+  $('usecase').addEventListener('change', () => {
+    const uc = $('usecase').value;
+    const cc = COUNTRIES[currentCountry];
+    if (uc === 'taxi') { $('annualKm').value = cc.avgKm * 3; $('homeRatio').value = 40; }
+    else if (uc === 'fleet') { $('annualKm').value = cc.avgKm * 2.5; $('homeRatio').value = 30; }
+    else { $('annualKm').value = cc.avgKm; $('homeRatio').value = 70; }
+    updateSliderDisplays(); render();
+  });
+  $('segment').addEventListener('change', render);
+}
+
+// ============================================================
+// CALCULATION ENGINE
+// ============================================================
+function getParams() {
+  return {
+    country: currentCountry,
+    city: $('city').value,
+    usecase: $('usecase').value,
+    segment: $('segment').value,
+    annualKm: +$('annualKm').value,
+    gasoline: +$('gasPrice').value,
+    elecHome: +$('elecHome').value,
+    elecPub: +$('elecPub').value,
+    homeRatio: +$('homeRatio').value / 100,
+    years: +$('ownerYears').value,
+    subsidy: +$('evSubsidy').value,
+    interest: +$('interestRate').value / 100,
+    fuelInflation: +$('fuelInflation').value / 100,
+    evResid: +$('evResid').value / 100,
+    iceResid: +$('iceResid').value / 100,
+    hybResid: +$('hybResid').value / 100,
+    battDeg: +$('battDeg').value / 100,
+  };
+}
+
+function calcTCO(p) {
+  const cc = COUNTRIES[p.country];
+  const city = cc.cities.find(c => c.id === p.city) || cc.cities[0];
+  const uc = USECASE[p.usecase];
+  const seg = cc.vehicles[p.segment];
+  if (!seg) return null;
+
+  const actualKm = p.annualKm * city.kMult * uc.kmMult;
+  const homeR = Math.min(p.homeRatio * uc.homeChargeMult, 1.0);
+  const results = {};
+
+  for (const t of ['ev', 'ice', 'hybrid']) {
+    const v = seg[t];
+    const purchasePrice = t === 'ev' ? Math.max(v.price - p.subsidy, v.price * 0.5) : v.price;
+    const finCost = purchasePrice * p.interest * p.years * 0.55;
+    const residRate = t === 'ev' ? p.evResid : t === 'hybrid' ? p.hybResid : p.iceResid;
+
+    const yearly = [];
+    let cumulative = purchasePrice + finCost;
+    const cumulativeArr = [cumulative];
+    const costPerKmArr = [];
+    const residualArr = [purchasePrice];
+
+    for (let yr = 1; yr <= p.years; yr++) {
+      const fuelNow = p.gasoline * Math.pow(1 + p.fuelInflation, yr - 1) * city.fMult;
+      let energyCost;
+      if (t === 'ev') {
+        const eff = v.eff * (1 - p.battDeg * yr * 0.3);
+        const elecBlend = p.elecHome * homeR + p.elecPub * city.eMult * (1 - homeR);
+        energyCost = (actualKm / eff) * elecBlend;
+      } else {
+        energyCost = (actualKm / v.kmpl) * fuelNow;
+      }
+      const maintenance = v.maint * uc.maintMult * (1 + 0.05 * (yr - 1));
+      const insurance = v.ins * Math.max(0.7, 1 - 0.03 * yr);
+      const tax = v.tax;
+      const yearTotal = energyCost + maintenance + insurance + tax;
+      cumulative += yearTotal;
+      const residual = purchasePrice * (residRate + (1 - residRate) * Math.exp(-0.25 * yr));
+      const netTCO = cumulative - residual;
+      yearly.push({ yr, energyCost, maintenance, insurance, tax, total: yearTotal, cumulative, residual, netTCO });
+      cumulativeArr.push(netTCO);
+      costPerKmArr.push(netTCO / (actualKm * yr));
+      residualArr.push(residual);
+    }
+    results[t] = { name: v.name, purchasePrice, finCost, yearly, cumulativeArr, costPerKmArr, residualArr, actualKm };
+  }
+  return results;
+}
+
+// Quick calc for comparison mode
+function quickTCO(countryKey) {
+  const cc = COUNTRIES[countryKey];
+  const seg = cc.vehicles.compact;
+  const p = {
+    country: countryKey, city: cc.cities[0].id, usecase: 'personal', segment: 'compact',
+    annualKm: cc.avgKm, gasoline: cc.gasoline, elecHome: cc.elecHome, elecPub: cc.elecPub,
+    homeRatio: 0.7, years: 10, subsidy: cc.evSubsidy, interest: cc.interest / 100,
+    fuelInflation: cc.fuelInflation / 100, evResid: cc.evResid / 100, iceResid: cc.iceResid / 100,
+    hybResid: cc.hybResid / 100, battDeg: 0.02,
+  };
+  return calcTCO(p);
+}
+
+// ============================================================
+// CHARTS
+// ============================================================
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.borderColor = '#334155';
+Chart.defaults.font.family = '-apple-system, system-ui, sans-serif';
+Chart.defaults.font.size = 11;
+
+let charts = {};
+function initCharts() {
+  const makeChart = (id, type, opts) => new Chart($(id), { type, data:{labels:[],datasets:[]}, options:opts });
+  const ttip$ = { callbacks: { label: ctx => ctx.dataset.label + ': ' + fmt$(ctx.raw) }};
+  const yAxis$ = { ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'k' }};
+
+  charts.tco = makeChart('tcoChart', 'line', { responsive:true, interaction:{intersect:false,mode:'index'}, plugins:{tooltip:ttip$}, scales:{y:yAxis$} });
+  charts.breakdown = makeChart('breakdownChart', 'bar', { responsive:true, plugins:{tooltip:ttip$}, scales:{x:{stacked:true},y:{stacked:true,ticks:{callback:v=>'$'+v.toLocaleString()}}} });
+  charts.costKm = makeChart('costPerKmChart', 'line', { responsive:true, interaction:{intersect:false,mode:'index'}, plugins:{tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': $'+ctx.raw.toFixed(3)+'/km'}}}, scales:{y:{ticks:{callback:v=>'$'+v.toFixed(2)}}} });
+  charts.residual = makeChart('residualChart', 'line', { responsive:true, interaction:{intersect:false,mode:'index'}, plugins:{tooltip:ttip$}, scales:{y:yAxis$} });
+  charts.sensitivity = makeChart('sensitivityChart', 'bar', { indexAxis:'y', responsive:true, plugins:{tooltip:{callbacks:{label:ctx=>fmt$(ctx.raw)+' impact'}}}, scales:{x:{ticks:{callback:v=>'$'+(v/1000).toFixed(1)+'k'}}} });
+
+  // Compare mode charts
+  charts.compare = makeChart('compareChart', 'bar', { responsive:true, plugins:{tooltip:ttip$}, scales:{y:yAxis$} });
+  charts.breakEvenC = makeChart('breakevenChart', 'bar', { responsive:true, scales:{y:{min:0,max:15,ticks:{callback:v=>'Year '+v}}} });
+  charts.energyRatio = makeChart('energyRatioChart', 'bar', { responsive:true, plugins:{tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.raw.toFixed(1)+'x'}}} });
+}
+
+// ============================================================
+// RENDER — single country
+// ============================================================
+function render() {
+  if (currentMode === 'compare') { renderCompare(); return; }
+  const p = getParams();
+  const data = calcTCO(p);
+  if (!data) return;
+  const years = p.years;
+  const labels = Array.from({length:years+1}, (_,i) => i===0 ? 'Buy' : 'Y'+i);
+  const cc = COUNTRIES[currentCountry];
+
+  // Insights
+  let brkYr = null;
+  for (let i = 1; i <= years; i++) { if (data.ev.cumulativeArr[i] < data.ice.cumulativeArr[i]) { brkYr = i; break; } }
+  $('breakeven').textContent = brkYr ? 'Year ' + brkYr : 'Not in period';
+  $('breakeven').className = 'big ' + (brkYr ? 'ev-color' : 'ice-color');
+  $('breakevenSub').textContent = brkYr ? 'EV cheaper after year ' + brkYr : 'ICE stays cheaper for ' + years + 'yr';
+
+  const savings = data.ice.cumulativeArr[years] - data.ev.cumulativeArr[years];
+  $('savings').textContent = fmt$(Math.abs(savings));
+  $('savings').className = 'big ' + (savings > 0 ? 'ev-color' : 'ice-color');
+
+  const evM = data.ev.yearly[0].energyCost / 12;
+  const iceM = data.ice.yearly[0].energyCost / 12;
+  $('monthlyFuel').innerHTML = `<span class="ev-color">${fmt$(evM)}</span> vs <span class="ice-color">${fmt$(iceM)}</span>`;
+  $('monthlyFuelSub').textContent = 'EV saves ' + fmt$(iceM - evM) + '/mo on energy';
+
+  const ends = { EV: data.ev.cumulativeArr[years], ICE: data.ice.cumulativeArr[years], Hybrid: data.hybrid.cumulativeArr[years] };
+  const best = Object.entries(ends).sort((a,b) => a[1]-b[1])[0];
+  $('bestOption').textContent = best[0];
+  $('bestOption').className = 'big ' + (best[0]==='EV'?'ev-color':best[0]==='ICE'?'ice-color':'hybrid-color');
+  $('bestOptionSub').textContent = fmt$(best[1]) + ' net TCO over ' + years + 'yr';
+
+  const evCpk = data.ev.cumulativeArr[years] / (data.ev.actualKm * years);
+  const iceCpk = data.ice.cumulativeArr[years] / (data.ice.actualKm * years);
+  $('costKm').innerHTML = `<span class="ev-color">$${evCpk.toFixed(2)}</span> vs <span class="ice-color">$${iceCpk.toFixed(2)}</span>`;
+  $('costKmSub').textContent = 'EV vs ICE per km at end';
+
+  // Charts
+  const ds = (label, arr, color) => ({ label, data:arr, borderColor:color, backgroundColor:color+'18', fill:false, tension:.3, pointRadius:2, borderWidth:2 });
+  charts.tco.data = { labels, datasets: [
+    ds('EV — '+data.ev.name, data.ev.cumulativeArr, '#10b981'),
+    ds('ICE — '+data.ice.name, data.ice.cumulativeArr, '#ef4444'),
+    ds('Hybrid — '+data.hybrid.name, data.hybrid.cumulativeArr, '#f59e0b'),
+  ]};
+  charts.tco.update();
+
+  charts.breakdown.data = { labels:['EV','ICE','Hybrid'], datasets: [
+    { label:'Energy', data:['ev','ice','hybrid'].map(t=>data[t].yearly[0].energyCost), backgroundColor:'#38bdf8' },
+    { label:'Maintenance', data:['ev','ice','hybrid'].map(t=>data[t].yearly[0].maintenance), backgroundColor:'#a78bfa' },
+    { label:'Insurance', data:['ev','ice','hybrid'].map(t=>data[t].yearly[0].insurance), backgroundColor:'#fb923c' },
+    { label:'Road Tax', data:['ev','ice','hybrid'].map(t=>data[t].yearly[0].tax), backgroundColor:'#6ee7b7' },
+  ]};
+  charts.breakdown.update();
+
+  const kmLbl = Array.from({length:years}, (_,i) => 'Y'+(i+1));
+  charts.costKm.data = { labels:kmLbl, datasets: [
+    ds('EV', data.ev.costPerKmArr, '#10b981'),
+    ds('ICE', data.ice.costPerKmArr, '#ef4444'),
+    ds('Hybrid', data.hybrid.costPerKmArr, '#f59e0b'),
+  ]};
+  charts.costKm.update();
+
+  charts.residual.data = { labels, datasets: [
+    ds('EV', data.ev.residualArr, '#10b981'),
+    ds('ICE', data.ice.residualArr, '#ef4444'),
+    ds('Hybrid', data.hybrid.residualArr, '#f59e0b'),
+  ]};
+  charts.residual.update();
+
+  // TCO Table
+  let html = '<table><thead><tr><th>Year</th><th>EV (USD)</th><th>EV ('+cc.currency+')</th><th>ICE (USD)</th><th>ICE ('+cc.currency+')</th><th>Hybrid (USD)</th><th>Diff EV-ICE</th><th>Winner</th></tr></thead><tbody>';
+  for (let i = 0; i <= years; i++) {
+    const ev = data.ev.cumulativeArr[i], ice = data.ice.cumulativeArr[i], hyb = data.hybrid.cumulativeArr[i];
+    const diff = ev - ice;
+    const mn = Math.min(ev,ice,hyb);
+    const winner = ev===mn?'EV':ice===mn?'ICE':'Hybrid';
+    const wc = ev===mn?'ev-color':ice===mn?'ice-color':'hybrid-color';
+    html += `<tr${ev===mn?' class="winner"':''}>
+      <td>${i===0?'Buy':'Y'+i}</td>
+      <td>${fmt$(ev)}</td><td>${fmtL(ev)}</td>
+      <td>${fmt$(ice)}</td><td>${fmtL(ice)}</td>
+      <td>${fmt$(hyb)}</td>
+      <td style="color:${diff<0?'#10b981':'#ef4444'}">${diff<0?'':'+'}${fmt$(diff)}</td>
+      <td class="${wc}" style="font-weight:600">${winner}</td>
+    </tr>`;
+  }
+  html += '</tbody></table>';
+  $('tcoTable').innerHTML = html;
+
+  // Annual table
+  html = '<table><thead><tr><th>Category</th><th>EV</th><th>ICE</th><th>Hybrid</th></tr></thead><tbody>';
+  const y1 = { ev:data.ev, ice:data.ice, hybrid:data.hybrid };
+  for (const [label, fn] of [
+    ['Purchase Price', t => y1[t].purchasePrice],
+    ['Financing Cost', t => y1[t].finCost],
+    ['Energy / Fuel (Y1)', t => y1[t].yearly[0].energyCost],
+    ['Maintenance (Y1)', t => y1[t].yearly[0].maintenance],
+    ['Insurance (Y1)', t => y1[t].yearly[0].insurance],
+    ['Road Tax (Y1)', t => y1[t].yearly[0].tax],
+    ['Total Running (Y1)', t => y1[t].yearly[0].total],
+  ]) {
+    html += '<tr><td>'+label+'</td>';
+    for (const t of ['ev','ice','hybrid']) html += '<td>'+fmt$(fn(t))+' <small style="color:var(--muted)">('+fmtL(fn(t))+')</small></td>';
+    html += '</tr>';
+  }
+  html += '</tbody></table>';
+  $('annualTable').innerHTML = html;
+
+  // Sensitivity
+  const baseSav = data.ice.cumulativeArr[years] - data.ev.cumulativeArr[years];
+  const sensParams = [
+    { label:'Annual km', key:'annualKm' },
+    { label:'Gasoline price', key:'gasPrice' },
+    { label:'Electricity (home)', key:'elecHome' },
+    { label:'EV subsidy', key:'evSubsidy' },
+    { label:'EV residual value', key:'evResid' },
+    { label:'ICE residual value', key:'iceResid' },
+    { label:'Fuel inflation', key:'fuelInflation' },
+    { label:'Interest rate', key:'interestRate' },
+  ];
+  const impacts = sensParams.map(sp => {
+    const pp = getParams();
+    const orig = +$(sp.key).value;
+    const bumped = orig * 1.2;
+    if (sp.key==='annualKm') pp.annualKm=bumped;
+    else if (sp.key==='gasPrice') pp.gasoline=bumped;
+    else if (sp.key==='elecHome') pp.elecHome=bumped;
+    else if (sp.key==='evSubsidy') pp.subsidy=bumped;
+    else if (sp.key==='evResid') pp.evResid=bumped/100;
+    else if (sp.key==='iceResid') pp.iceResid=bumped/100;
+    else if (sp.key==='fuelInflation') pp.fuelInflation=bumped/100;
+    else if (sp.key==='interestRate') pp.interest=bumped/100;
+    const d2 = calcTCO(pp);
+    const newSav = d2.ice.cumulativeArr[years] - d2.ev.cumulativeArr[years];
+    return { label:sp.label, impact:newSav-baseSav };
+  }).sort((a,b) => Math.abs(b.impact)-Math.abs(a.impact));
+  charts.sensitivity.data = {
+    labels: impacts.map(i=>i.label),
+    datasets: [{ label:'Impact', data:impacts.map(i=>i.impact), backgroundColor:impacts.map(i=>i.impact>0?'#10b981':'#ef4444') }]
+  };
+  charts.sensitivity.update();
+
+  renderFactors();
+}
+
+// ============================================================
+// RENDER — cross-country comparison
+// ============================================================
+function renderCompare() {
+  const countries = Object.keys(COUNTRIES);
+  const results = {};
+  countries.forEach(c => { results[c] = quickTCO(c); });
+
+  // Cards
+  $('compareCards').innerHTML = countries.map(c => {
+    const cc = COUNTRIES[c];
+    const d = results[c];
+    const evTco = d.ev.cumulativeArr[10];
+    const iceTco = d.ice.cumulativeArr[10];
+    const savings = iceTco - evTco;
+    let brkYr = null;
+    for (let i = 1; i <= 10; i++) { if (d.ev.cumulativeArr[i] < d.ice.cumulativeArr[i]) { brkYr = i; break; } }
+    return `<div class="compare-card" onclick="selectCountry('${c}');setMode('single')">
+      <div class="cflag">${cc.flag}</div>
+      <div class="cname">${cc.name}</div>
+      <div class="cval ${savings>0?'ev-color':'ice-color'}">${savings>0?'EV saves ':'ICE saves '}${fmt$(Math.abs(savings))}</div>
+      <div class="cdata">Breakeven: ${brkYr?'Year '+brkYr:'Never (10yr)'}</div>
+      <div class="cdata">EV share: ${cc.evShare}%</div>
+    </div>`;
+  }).join('');
+
+  // Bar chart
+  charts.compare.data = {
+    labels: countries.map(c => COUNTRIES[c].name),
+    datasets: [
+      { label:'EV', data: countries.map(c => results[c].ev.cumulativeArr[10]), backgroundColor:'#10b981' },
+      { label:'ICE', data: countries.map(c => results[c].ice.cumulativeArr[10]), backgroundColor:'#ef4444' },
+      { label:'Hybrid', data: countries.map(c => results[c].hybrid.cumulativeArr[10]), backgroundColor:'#f59e0b' },
+    ]
+  };
+  charts.compare.update();
+
+  // Breakeven chart
+  const brkData = countries.map(c => {
+    const d = results[c];
+    for (let i = 1; i <= 10; i++) { if (d.ev.cumulativeArr[i] < d.ice.cumulativeArr[i]) return i; }
+    return 11;
+  });
+  charts.breakEvenC.data = {
+    labels: countries.map(c => COUNTRIES[c].name),
+    datasets: [{ label:'Breakeven Year', data: brkData, backgroundColor: brkData.map(v => v <= 5 ? '#10b981' : v <= 8 ? '#f59e0b' : '#ef4444') }]
+  };
+  charts.breakEvenC.options.scales.y.max = 12;
+  charts.breakEvenC.update();
+
+  // Energy ratio
+  charts.energyRatio.data = {
+    labels: countries.map(c => COUNTRIES[c].name),
+    datasets: [{
+      label: 'Gas / Elec price ratio',
+      data: countries.map(c => {
+        const cc = COUNTRIES[c];
+        const elecBlend = cc.elecHome * 0.7 + cc.elecPub * 0.3;
+        const evCostPer100km = (100 / 6.5) * elecBlend;
+        const iceCostPer100km = (100 / 15) * cc.gasoline;
+        return iceCostPer100km / evCostPer100km;
+      }),
+      backgroundColor: countries.map(c => {
+        const cc = COUNTRIES[c];
+        const r = cc.gasoline / (cc.elecHome * 0.7 + cc.elecPub * 0.3);
+        return r > 6 ? '#10b981' : r > 3 ? '#f59e0b' : '#ef4444';
+      }),
+    }]
+  };
+  charts.energyRatio.update();
+
+  // Policy table
+  let html = '<table class="policy-table"><thead><tr><th>Country</th><th>EV Share</th><th>Subsidy</th><th>Import/Excise Duty</th><th>Road Tax</th><th>Chargers</th><th>Key Challenge</th></tr></thead><tbody>';
+  countries.forEach(c => {
+    const cc = COUNTRIES[c];
+    const p = cc.policy;
+    const evClass = cc.evShare > 15 ? 'good' : cc.evShare > 5 ? 'moderate' : 'poor';
+    const chgClass = cc.chargers > 5000 ? 'good' : cc.chargers > 1000 ? 'moderate' : 'poor';
+    html += `<tr>
+      <td>${cc.flag} ${cc.name}</td>
+      <td class="${evClass}">${cc.evShare}%</td>
+      <td>${p.subsidy}</td>
+      <td>${p.duty}</td>
+      <td>${p.roadTax}</td>
+      <td class="${chgClass}">${cc.chargers.toLocaleString()}</td>
+      <td style="font-size:.75rem;max-width:200px;white-space:normal">${p.notes}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  $('policyTable').innerHTML = html;
+
+  renderFactors();
+}
+
+// ============================================================
+// MODE SWITCHING
+// ============================================================
+function setMode(mode, btn) {
+  currentMode = mode;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+  $('singleMode').style.display = mode === 'single' ? '' : 'none';
+  $('compareMode').style.display = mode === 'compare' ? '' : 'none';
+  if (mode === 'compare') renderCompare();
+  else render();
+}
+
+// ============================================================
+// KEY FACTORS
+// ============================================================
+function renderFactors() {
+  const cc = COUNTRIES[currentCountry];
+  const factors = [
+    { title:'Annual Kilometers Driven', desc:'Higher mileage = faster EV payback. Fleet/taxi operators (30-50K km/yr) see breakeven 2-3x faster than personal drivers. This is the #1 lever for fleet operators deciding when to switch.', s:.9, color:'#10b981' },
+    { title:'Fuel vs Electricity Price Gap', desc:`In ${cc.name}: gasoline is $${cc.gasoline.toFixed(2)}/L vs electricity ~$${cc.elecHome.toFixed(3)}/kWh. The wider this gap, the stronger the EV case. ${cc.name === 'Malaysia' ? 'Malaysia\'s subsidized RON 95 at RM2.05/L makes ICE artificially cheap.' : ''}`, s:.85, color:'#10b981' },
+    { title:'Purchase Price Parity', desc:'Chinese EVs (BYD, Wuling, VinFast) have brought EV prices to ICE parity in Thailand, Vietnam, and Indonesia. Singapore adds COE which inflates all car prices but EV rebates help.', s:.75, color:'#f59e0b' },
+    { title:'Government Subsidies & Policy', desc:`${cc.name}: ${cc.policy.subsidy}. ${cc.policy.duty}. Policy certainty drives manufacturer investment and consumer confidence.`, s:.7, color:'#f59e0b' },
+    { title:'Charging Infrastructure', desc:`${cc.name} has ~${cc.chargers.toLocaleString()} public chargers. Vietnam leads ASEAN with 150K+ (VinFast network). Lack of charging is the top barrier in Philippines, Cambodia, Myanmar.`, s:.65, color:cc.chargers > 5000 ? '#10b981' : '#ef4444' },
+    { title:'Residual Value / Resale', desc:'EV resale values are still maturing in most ASEAN markets. Battery health perception and rapid model turnover create uncertainty. Thailand and Singapore have the most mature EV resale markets.', s:.6, color:'#f59e0b' },
+    { title:'Maintenance Advantage', desc:'EVs save 50-60% on maintenance: no oil changes, simpler drivetrain, regenerative braking extends brake life. This advantage compounds over time as ICE maintenance increases with age.', s:.55, color:'#10b981' },
+    { title:'Electricity Grid Reliability', desc:'Myanmar and Cambodia face unreliable grids which undermine EV charging confidence. Singapore and Taiwan have nearly 100% reliability. Grid investment is a prerequisite for EV adoption.', s:.45, color:'#ef4444' },
+  ];
+  $('factorsContainer').innerHTML = factors.map(f => `
+    <div class="factor-card">
+      <h4>${f.title}</h4>
+      <p>${f.desc}</p>
+      <div class="sensitivity-bar"><div class="sensitivity-fill" style="width:${f.s*100}%;background:${f.color}"></div></div>
+      <div style="font-size:.7rem;color:var(--muted);margin-top:.2rem">Impact: ${f.s>.7?'Very High':f.s>.5?'High':'Moderate'}</div>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// INIT
+// ============================================================
+buildCountryBar();
+initCharts();
+wireSliders();
+selectCountry('thailand');
+</script>
+</body>
+</html>
