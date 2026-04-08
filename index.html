@@ -100,6 +100,7 @@ footer a{color:var(--accent);text-decoration:none}
             <option value="compact">Compact Car</option>
             <option value="midsize">Mid-size Car</option>
             <option value="suv">SUV / Crossover</option>
+            <option value="mpv">MPV / Minivan (7-seat ride-hail)</option>
             <option value="motorbike_commuter">Motorbike — Commuter (110-125cc class)</option>
             <option value="motorbike_premium">Motorbike — Premium Scooter (150cc+ class)</option>
           </select>
@@ -175,6 +176,7 @@ footer a{color:var(--accent);text-decoration:none}
     <h2 class="section-title">Cross-Country Comparison</h2>
     <div class="tabs">
       <button class="tab-btn active" data-seg="compact" onclick="setCmpSeg('compact',this)">Compact Car</button>
+      <button class="tab-btn" data-seg="mpv" onclick="setCmpSeg('mpv',this)">MPV (Ride-hail)</button>
       <button class="tab-btn" data-seg="motorbike_commuter" onclick="setCmpSeg('motorbike_commuter',this)">Commuter Motorbike</button>
       <button class="tab-btn" data-seg="motorbike_premium" onclick="setCmpSeg('motorbike_premium',this)">Premium Scooter</button>
     </div>
@@ -208,7 +210,7 @@ const C = {
     gas:1.14, diesel:0.90, eH:0.13, eP:0.20, evSh:21, sub:2860, int:3.5, fInf:3,
     avgKm:15000, chrg:12000, chrgScore:.75, evR:40, iceR:48, hybR:44,
     hourly:2.5, swapAvail:false, dcChargeMin:35, refuelMin:5, bikeChargeMin:300, bikeSwapMin:0,
-    cities:[{id:'bkk',name:'Bangkok',f:1,e:1,k:1,c:.9},{id:'cnx',name:'Chiang Mai',f:1.02,e:.98,k:.8,c:.6},{id:'hkt',name:'Phuket',f:1.03,e:1.01,k:.85,c:.5},{id:'pty',name:'Pattaya',f:1.01,e:1,k:.9,c:.7}],
+    cities:[{id:'bkk',name:'Bangkok',f:1,e:1,k:1,c:.9},{id:'cnx',name:'Chiang Mai',f:1.02,e:.98,k:.8,c:.6},{id:'hkt',name:'Phuket',f:1.03,e:1.01,k:.85,c:.5},{id:'pty',name:'Pattaya',f:1.01,e:1,k:.9,c:.7},{id:'kkn',name:'Khon Kaen',f:1.01,e:.97,k:.7,c:.4},{id:'hdy',name:'Hat Yai',f:1.02,e:.98,k:.75,c:.35},{id:'nkr',name:'Nakhon Ratchasima',f:1.01,e:.97,k:.7,c:.35},{id:'udi',name:'Udon Thani',f:1.02,e:.98,k:.65,c:.3}],
     v:{
       compact:{
         ev:{name:'BYD Dolphin ER',price:16280,eff:6.5,m:170,i:510,t:43},
@@ -222,6 +224,10 @@ const C = {
         ev:{name:'BYD Atto 3',price:22850,eff:5.8,m:220,i:640,t:43},
         ice:{name:'Toyota Fortuner',price:40000,kpl:11,m:710,i:800,t:171},
         hybrid:{name:'Honda CR-V e:HEV',price:44300,kpl:18,m:510,i:770,t:114}},
+      mpv:{
+        ev:{name:'BYD M6 Extended',price:26570,eff:5.0,m:230,i:680,t:43},
+        ice:{name:'Toyota Innova Zenix HEV',price:42260,kpl:18,m:600,i:720,t:100},
+        hybrid:{name:'Toyota Innova Zenix HEV',price:42260,kpl:18,m:600,i:720,t:100}},
       motorbike_commuter:{
         ev:{name:'Deco WMOTO / Chinese EV',price:1400,eff:25,m:40,i:80,t:5},
         ice:{name:'Honda Wave 110i',price:1170,kpl:50,m:80,i:60,t:10}},
@@ -229,14 +235,14 @@ const C = {
         ev:{name:'NIU NQi / Yadea G5',price:2800,eff:18,m:50,i:120,t:5},
         ice:{name:'Honda PCX 160',price:2700,kpl:40,m:120,i:100,t:15}},
     },
-    policy:{sub:'Up to \u{0E3F}150K (~$4.3K) under EV3.0/3.5',duty:'Reduced import/excise for CKD EV',tax:'Weight-based for EV (lower)',chrg:'12K+ public chargers',note:'EV3.5 from 2024; BYD, Tesla local assembly planned. 2-wheel EV nascent.'}
+    policy:{sub:'Up to \u{0E3F}150K (~$4.3K) under EV3.0/3.5',duty:'Reduced import/excise for CKD EV',tax:'Weight-based for EV (lower)',chrg:'12K+ public chargers',note:'EV3.5 from 2024; BYD, Tesla local assembly. Grab-BYD partnership: M6 + Denza D9 for ride-hail.'}
   },
   vietnam: {
     name:'Vietnam', flag:'\u{1F1FB}\u{1F1F3}', cur:'VND', rate:25400,
     gas:0.96, diesel:0.84, eH:0.084, eP:0.15, evSh:18, sub:1200, int:7, fInf:4,
     avgKm:12000, chrg:150000, chrgScore:.85, evR:35, iceR:50, hybR:45,
     hourly:2.0, swapAvail:true, dcChargeMin:40, refuelMin:5, bikeChargeMin:240, bikeSwapMin:5,
-    cities:[{id:'hn',name:'Hanoi',f:1,e:1,k:1,c:.9},{id:'hcm',name:'Ho Chi Minh City',f:1,e:1,k:1.1,c:.9},{id:'dn',name:'Da Nang',f:1.01,e:.98,k:.8,c:.6}],
+    cities:[{id:'hn',name:'Hanoi',f:1,e:1,k:1,c:.9},{id:'hcm',name:'Ho Chi Minh City',f:1,e:1,k:1.1,c:.9},{id:'dn',name:'Da Nang',f:1.01,e:.98,k:.8,c:.6},{id:'hp',name:'Hai Phong',f:1.01,e:.99,k:.75,c:.5},{id:'ct',name:'Can Tho',f:1.02,e:.99,k:.7,c:.4},{id:'nt',name:'Nha Trang',f:1.02,e:1,k:.7,c:.45},{id:'hue',name:'Hue',f:1.01,e:.98,k:.65,c:.35}],
     v:{
       compact:{
         ev:{name:'VinFast VF5 Plus',price:18100,eff:7.0,m:120,i:350,t:0},
@@ -250,6 +256,9 @@ const C = {
         ev:{name:'VinFast VF8',price:44500,eff:4.8,m:220,i:780,t:0},
         ice:{name:'Toyota Fortuner',price:42000,kpl:10,m:600,i:700,t:150},
         hybrid:{name:'Honda CR-V HEV',price:46000,kpl:17,m:480,i:650,t:110}},
+      mpv:{
+        ev:{name:'VinFast VF9 (7-seat)',price:58000,eff:4.2,m:280,i:900,t:0},
+        ice:{name:'Toyota Innova Cross',price:35400,kpl:13,m:550,i:600,t:113}},
       motorbike_commuter:{
         ev:{name:'VinFast Evo 200',price:790,eff:30,m:25,i:40,t:0},
         ice:{name:'Honda Wave Alpha 110',price:620,kpl:55,m:60,i:35,t:8}},
@@ -257,14 +266,14 @@ const C = {
         ev:{name:'VinFast Klara S / Feliz S',price:1180,eff:20,m:35,i:55,t:0},
         ice:{name:'Honda SH 150i',price:3350,kpl:38,m:100,i:80,t:12}},
     },
-    policy:{sub:'100% registration tax exemption',duty:'0% import duty BEV; 0% reg tax to 2027',tax:'Road fee waiver 3yr for EV',chrg:'150K+ VinFast chargers',note:'VinFast dominates; huge 2-wheel EV push (Evo from $790). Battery swap via VinFast Green.'}
+    policy:{sub:'100% registration tax exemption',duty:'0% import duty BEV; 0% reg tax to 2027',tax:'Road fee waiver 3yr for EV',chrg:'150K+ VinFast chargers',note:'VinFast dominates. VF9 for premium ride-hail. Battery swap for 2W via VinFast Green.'}
   },
   indonesia: {
     name:'Indonesia', flag:'\u{1F1EE}\u{1F1E9}', cur:'IDR', rate:15900,
     gas:0.78, diesel:0.52, eH:0.086, eP:0.16, evSh:13, sub:4400, int:6, fInf:3,
     avgKm:12000, chrg:4500, chrgScore:.45, evR:35, iceR:50, hybR:45,
     hourly:1.8, swapAvail:true, dcChargeMin:40, refuelMin:5, bikeChargeMin:270, bikeSwapMin:5,
-    cities:[{id:'jkt',name:'Jakarta',f:1,e:1,k:1,c:.7},{id:'sby',name:'Surabaya',f:.98,e:.98,k:.85,c:.4},{id:'bdg',name:'Bandung',f:.98,e:.97,k:.8,c:.35},{id:'bal',name:'Bali',f:1.02,e:1,k:.7,c:.5}],
+    cities:[{id:'jkt',name:'Jakarta',f:1,e:1,k:1,c:.7},{id:'sby',name:'Surabaya',f:.98,e:.98,k:.85,c:.4},{id:'bdg',name:'Bandung',f:.98,e:.97,k:.8,c:.35},{id:'bal',name:'Bali (Denpasar)',f:1.02,e:1,k:.7,c:.5},{id:'mdn',name:'Medan',f:.99,e:.98,k:.8,c:.3},{id:'smg',name:'Semarang',f:.98,e:.97,k:.8,c:.35},{id:'mks',name:'Makassar',f:1.01,e:.99,k:.75,c:.25},{id:'yk',name:'Yogyakarta',f:.97,e:.97,k:.75,c:.3}],
     v:{
       compact:{
         ev:{name:'Wuling Air EV Lite',price:10700,eff:7.5,m:120,i:260,t:0},
@@ -278,6 +287,10 @@ const C = {
         ev:{name:'Hyundai Ioniq 5',price:49700,eff:5.5,m:200,i:680,t:0},
         ice:{name:'Toyota Fortuner',price:32000,kpl:10,m:540,i:540,t:130},
         hybrid:{name:'Honda CR-V HEV',price:38000,kpl:17,m:430,i:490,t:100}},
+      mpv:{
+        ev:{name:'BYD M6 Extended',price:27230,eff:5.0,m:220,i:600,t:0},
+        ice:{name:'Toyota Kijang Innova Zenix',price:30440,kpl:15,m:520,i:520,t:90},
+        hybrid:{name:'Toyota Innova Zenix HEV',price:33500,kpl:20,m:450,i:560,t:70}},
       motorbike_commuter:{
         ev:{name:'Gesits / United E-Motor',price:1100,eff:28,m:30,i:50,t:0},
         ice:{name:'Honda BeAT 110',price:940,kpl:50,m:65,i:40,t:8}},
@@ -285,14 +298,14 @@ const C = {
         ev:{name:'Alva One / SWAP',price:2200,eff:18,m:40,i:80,t:0},
         ice:{name:'Yamaha NMAX 155',price:1950,kpl:38,m:100,i:70,t:12}},
     },
-    policy:{sub:'IDR 70M (~$4.4K) for local EV',duty:'0% import + 0% luxury tax for EV',tax:'EV exempt annual tax',chrg:'~4,500 chargers',note:'BYD factory 2025. Gojek/Grab pushing 2W EV fleets; battery swap stations growing via SWAP/Gogoro.'}
+    policy:{sub:'IDR 70M (~$4.4K) for local EV',duty:'0% import + 0% luxury tax for EV',tax:'EV exempt annual tax',chrg:'~4,500 chargers',note:'BYD factory 2025. Denza D9 for GrabExec. Gojek/Grab pushing 2W EV; battery swap via SWAP/Gogoro.'}
   },
   malaysia: {
     name:'Malaysia', flag:'\u{1F1F2}\u{1F1FE}', cur:'MYR', rate:4.45,
     gas:0.47, diesel:0.50, eH:0.102, eP:0.18, evSh:4, sub:0, int:3.5, fInf:5,
     avgKm:15000, chrg:3000, chrgScore:.5, evR:38, iceR:52, hybR:48,
     hourly:2.5, swapAvail:false, dcChargeMin:35, refuelMin:5, bikeChargeMin:300, bikeSwapMin:0,
-    cities:[{id:'kl',name:'Kuala Lumpur',f:1,e:1,k:1,c:.7},{id:'pg',name:'Penang',f:1,e:1,k:.85,c:.5},{id:'jb',name:'Johor Bahru',f:1,e:1,k:.9,c:.55}],
+    cities:[{id:'kl',name:'Kuala Lumpur',f:1,e:1,k:1,c:.7},{id:'pg',name:'Penang',f:1,e:1,k:.85,c:.5},{id:'jb',name:'Johor Bahru',f:1,e:1,k:.9,c:.55},{id:'ip',name:'Ipoh',f:1,e:.98,k:.7,c:.35},{id:'kb',name:'Kota Bharu',f:1.01,e:.99,k:.6,c:.2},{id:'kk',name:'Kota Kinabalu',f:1.02,e:1.01,k:.65,c:.2},{id:'kch',name:'Kuching',f:1.02,e:1,k:.65,c:.25},{id:'mlk',name:'Melaka',f:1,e:1,k:.75,c:.4}],
     v:{
       compact:{
         ev:{name:'BYD Atto 3 Ultra',price:27820,eff:6.5,m:150,i:480,t:10},
@@ -306,6 +319,10 @@ const C = {
         ev:{name:'Tesla Model Y RWD',price:43930,eff:5.5,m:200,i:780,t:10},
         ice:{name:'Proton X70 1.5T',price:24500,kpl:12,m:460,i:500,t:120},
         hybrid:{name:'Honda CR-V e:HEV',price:38000,kpl:18,m:400,i:580,t:90}},
+      mpv:{
+        ev:{name:'BYD M6 Extended',price:27820,eff:5.0,m:210,i:640,t:10},
+        ice:{name:'Toyota Innova Zenix 2.0V',price:37080,kpl:14,m:520,i:560,t:100},
+        hybrid:{name:'Toyota Innova Zenix HEV',price:45390,kpl:20,m:440,i:600,t:80}},
       motorbike_commuter:{
         ev:{name:'Blueshark R1 / Chinese EV',price:1500,eff:25,m:35,i:70,t:5},
         ice:{name:'Honda Wave 110',price:870,kpl:55,m:60,i:40,t:8}},
@@ -313,7 +330,7 @@ const C = {
         ev:{name:'NIU NQi / Yadea',price:2600,eff:18,m:45,i:100,t:5},
         ice:{name:'Honda PCX 160',price:2470,kpl:40,m:100,i:80,t:12}},
     },
-    policy:{sub:'No direct cash subsidy',duty:'100% import/excise exemption EV to 2027',tax:'EV road tax ~RM20-50 (kW based)',chrg:'~3,000 chargers',note:'RON 95 at RM2.05/L ($0.47) is HEAVILY subsidized. Subsidy removal would transform TCO overnight.'}
+    policy:{sub:'No direct cash subsidy',duty:'100% import/excise exemption EV to 2027',tax:'EV road tax ~RM20-50 (kW based)',chrg:'~3,000 chargers',note:'RON 95 at RM2.05/L ($0.47) HEAVILY subsidized — distorts TCO. BYD M6 MPV now available from RM110K.'}
   },
   singapore: {
     name:'Singapore', flag:'\u{1F1F8}\u{1F1EC}', cur:'SGD', rate:1.35,
@@ -334,15 +351,19 @@ const C = {
         ev:{name:'Tesla Model Y (w/ COE)',price:155000,eff:5.5,m:580,i:2900,t:750},
         ice:{name:'Toyota RAV4 (w/ COE)',price:150000,kpl:12,m:1050,i:2700,t:1200},
         hybrid:{name:'Toyota RAV4 HEV (w/ COE)',price:158000,kpl:19,m:830,i:2600,t:900}},
+      mpv:{
+        ev:{name:'Denza D9 EV (w/ COE)',price:310000,eff:4.0,m:700,i:3800,t:800},
+        ice:{name:'Toyota Noah HEV (w/ COE)',price:210000,kpl:20,m:850,i:2800,t:700},
+        hybrid:{name:'Toyota Voxy HEV (w/ COE)',price:240000,kpl:20,m:850,i:3000,t:700}},
     },
-    policy:{sub:'EEAI: up to S$45K ARF rebate + VES S$25K',duty:'ARF+COE (EV gets 45% ARF rebate capped S$15K)',tax:'kW-based + S$700/yr EV surcharge',chrg:'5,000+; target 60K by 2030',note:'40% EV share. Highest car prices globally but EV rebates close the gap. No motorbikes (banned from expressways).'}
+    policy:{sub:'EEAI: up to S$45K ARF rebate + VES S$25K',duty:'ARF+COE (EV gets 45% ARF rebate capped S$15K)',tax:'kW-based + S$700/yr EV surcharge',chrg:'5,000+; target 60K by 2030',note:'40% EV share. Grab Premium uses Toyota Noah HEV. Denza D9 for GrabExec (luxury EV MPV). No motorbikes.'}
   },
   philippines: {
     name:'Philippines', flag:'\u{1F1F5}\u{1F1ED}', cur:'PHP', rate:57,
     gas:1.08, diesel:0.93, eH:0.23, eP:0.35, evSh:1.5, sub:0, int:6, fInf:4,
     avgKm:12000, chrg:500, chrgScore:.2, evR:30, iceR:50, hybR:45,
     hourly:2.0, swapAvail:false, dcChargeMin:40, refuelMin:5, bikeChargeMin:300, bikeSwapMin:0,
-    cities:[{id:'mnl',name:'Metro Manila',f:1,e:1,k:1,c:.4},{id:'ceb',name:'Cebu',f:1.02,e:1.02,k:.8,c:.2},{id:'dvo',name:'Davao',f:1.01,e:1.01,k:.7,c:.15}],
+    cities:[{id:'mnl',name:'Metro Manila',f:1,e:1,k:1,c:.4},{id:'ceb',name:'Cebu',f:1.02,e:1.02,k:.8,c:.2},{id:'dvo',name:'Davao',f:1.01,e:1.01,k:.7,c:.15},{id:'clk',name:'Clark/Angeles',f:1.01,e:1,k:.75,c:.15},{id:'ilo',name:'Iloilo',f:1.02,e:1.02,k:.65,c:.1},{id:'bcd',name:'Bacolod',f:1.02,e:1.02,k:.6,c:.08}],
     v:{
       compact:{
         ev:{name:'BYD Seagull',price:15750,eff:7.0,m:140,i:370,t:40},
@@ -356,6 +377,10 @@ const C = {
         ev:{name:'BYD Atto 3',price:29470,eff:5.5,m:210,i:620,t:40},
         ice:{name:'Toyota Fortuner',price:35000,kpl:10,m:530,i:560,t:130},
         hybrid:{name:'Honda CR-V HEV',price:40000,kpl:17,m:430,i:530,t:100}},
+      mpv:{
+        ev:{name:'BYD M6 (if avail) / GAC Aion',price:32000,eff:5.0,m:220,i:640,t:40},
+        ice:{name:'Toyota Zenix 2.0 Q HEV',price:35200,kpl:17,m:520,i:560,t:100},
+        hybrid:{name:'Toyota Zenix 2.0 Q HEV',price:35200,kpl:17,m:520,i:560,t:100}},
       motorbike_commuter:{
         ev:{name:'Yadea / Chinese EV',price:1050,eff:28,m:30,i:45,t:5},
         ice:{name:'Honda Click 125i',price:1400,kpl:48,m:65,i:40,t:8}},
@@ -363,14 +388,14 @@ const C = {
         ev:{name:'NIU NQi GT',price:2800,eff:18,m:45,i:90,t:5},
         ice:{name:'Yamaha NMAX 155',price:2100,kpl:38,m:95,i:70,t:12}},
     },
-    policy:{sub:'No direct cash subsidy',duty:'EVIDA: 0% tariff on EV imports to 2028',tax:'EV exempt excise tax',chrg:'~500 chargers',note:'Most expensive electricity in ASEAN ($0.23/kWh) hurts EV case. Motorbike-dominant market — EV 2W could leapfrog cars.'}
+    policy:{sub:'No direct cash subsidy',duty:'EVIDA: 0% tariff on EV imports to 2028',tax:'EV exempt excise tax',chrg:'~500 chargers',note:'Most expensive electricity in ASEAN. Grab launched first e-taxi fleet (GrabTaxi Electric) June 2025. MPV dominant for ride-hail.'}
   },
   cambodia: {
     name:'Cambodia', flag:'\u{1F1F0}\u{1F1ED}', cur:'USD', rate:1,
     gas:1.25, diesel:1.05, eH:0.152, eP:0.25, evSh:0.8, sub:0, int:8, fInf:3,
     avgKm:10000, chrg:200, chrgScore:.15, evR:30, iceR:55, hybR:48,
     hourly:1.5, swapAvail:false, dcChargeMin:45, refuelMin:5, bikeChargeMin:300, bikeSwapMin:0,
-    cities:[{id:'pp',name:'Phnom Penh',f:1,e:1,k:1,c:.3},{id:'sr',name:'Siem Reap',f:1.03,e:1.05,k:.6,c:.1}],
+    cities:[{id:'pp',name:'Phnom Penh',f:1,e:1,k:1,c:.3},{id:'sr',name:'Siem Reap',f:1.03,e:1.05,k:.6,c:.1},{id:'btb',name:'Battambang',f:1.04,e:1.06,k:.5,c:.05},{id:'shv',name:'Sihanoukville',f:1.05,e:1.05,k:.55,c:.08}],
     v:{
       compact:{
         ev:{name:'BYD Dolphin / MG4',price:25000,eff:6.5,m:150,i:380,t:50},
@@ -384,6 +409,9 @@ const C = {
         ev:{name:'BYD Atto 3',price:38000,eff:5.5,m:220,i:630,t:50},
         ice:{name:'Toyota Fortuner',price:45000,kpl:10,m:540,i:590,t:130},
         hybrid:{name:'Honda CR-V HEV',price:48000,kpl:17,m:430,i:570,t:100}},
+      mpv:{
+        ev:{name:'BYD M6 (import)',price:35000,eff:5.0,m:230,i:600,t:50},
+        ice:{name:'Toyota Innova',price:38000,kpl:13,m:500,i:520,t:100}},
       motorbike_commuter:{
         ev:{name:'Yadea / Chinese import',price:800,eff:25,m:25,i:35,t:3},
         ice:{name:'Honda Wave 110',price:650,kpl:50,m:55,i:30,t:6}},
@@ -391,14 +419,14 @@ const C = {
         ev:{name:'NIU / Yadea G5',price:1800,eff:18,m:35,i:60,t:3},
         ice:{name:'Honda PCX 150',price:2800,kpl:38,m:90,i:60,t:10}},
     },
-    policy:{sub:'None',duty:'Standard import duties',tax:'Minimal',chrg:'~200 (Phnom Penh only)',note:'~13K registered EVs total. Chinese e-motorbike imports growing fast.'}
+    policy:{sub:'None',duty:'Standard import duties',tax:'Minimal',chrg:'~200 (Phnom Penh only)',note:'~13K registered EVs total. Chinese e-motorbike imports growing. Tuk-tuks going electric.'}
   },
   myanmar: {
     name:'Myanmar', flag:'\u{1F1F2}\u{1F1F2}', cur:'MMK', rate:3300,
     gas:0.84, diesel:0.80, eH:0.023, eP:0.10, evSh:0.3, sub:0, int:10, fInf:8,
     avgKm:8000, chrg:50, chrgScore:.05, evR:25, iceR:55, hybR:48,
     hourly:1.2, swapAvail:false, dcChargeMin:50, refuelMin:5, bikeChargeMin:360, bikeSwapMin:0,
-    cities:[{id:'ygn',name:'Yangon',f:1,e:1,k:1,c:.1},{id:'mdy',name:'Mandalay',f:1.02,e:1.05,k:.7,c:.03}],
+    cities:[{id:'ygn',name:'Yangon',f:1,e:1,k:1,c:.1},{id:'mdy',name:'Mandalay',f:1.02,e:1.05,k:.7,c:.03},{id:'npt',name:'Naypyidaw',f:1.01,e:1.02,k:.5,c:.02},{id:'mdl',name:'Mawlamyine',f:1.03,e:1.05,k:.45,c:.01}],
     v:{
       compact:{
         ev:{name:'Chinese imports (BYD/MG)',price:28000,eff:6.5,m:140,i:340,t:40},
@@ -412,6 +440,9 @@ const C = {
         ev:{name:'BYD Atto 3 (import)',price:42000,eff:5.5,m:210,i:530,t:40},
         ice:{name:'Toyota Fortuner',price:38000,kpl:10,m:440,i:440,t:110},
         hybrid:{name:'Honda CR-V HEV',price:44000,kpl:17,m:370,i:470,t:85}},
+      mpv:{
+        ev:{name:'Chinese EV MPV (import)',price:40000,eff:5.0,m:220,i:550,t:40},
+        ice:{name:'Toyota Innova (import)',price:35000,kpl:13,m:450,i:440,t:90}},
       motorbike_commuter:{
         ev:{name:'Chinese e-bike',price:500,eff:28,m:20,i:25,t:2},
         ice:{name:'Honda Wave 100',price:420,kpl:55,m:45,i:20,t:5}},
@@ -419,14 +450,14 @@ const C = {
         ev:{name:'Yadea / NIU import',price:1400,eff:20,m:30,i:45,t:2},
         ice:{name:'Yamaha NMAX 155',price:2200,kpl:38,m:80,i:50,t:10}},
     },
-    policy:{sub:'None',duty:'Import duties apply',tax:'Standard',chrg:'<50 chargers; unreliable grid',note:'Cheapest electricity ($0.023/kWh) but grid is unreliable. 87 licensed EV companies. 2W EV from China growing.'}
+    policy:{sub:'None',duty:'Import duties apply',tax:'Standard',chrg:'<50 chargers; unreliable grid',note:'Cheapest electricity but unreliable. 87 licensed EV companies. Political instability limits investment.'}
   },
   taiwan: {
     name:'Taiwan', flag:'\u{1F1F9}\u{1F1FC}', cur:'TWD', rate:32.5,
     gas:0.96, diesel:0.84, eH:0.10, eP:0.22, evSh:9, sub:2500, int:3, fInf:2,
     avgKm:12000, chrg:14000, chrgScore:.7, evR:38, iceR:50, hybR:46,
     hourly:5, swapAvail:true, dcChargeMin:30, refuelMin:5, bikeChargeMin:0, bikeSwapMin:0.1,
-    cities:[{id:'tpe',name:'Taipei',f:1,e:1,k:1,c:.85},{id:'txg',name:'Taichung',f:.99,e:.98,k:.9,c:.6},{id:'khh',name:'Kaohsiung',f:.99,e:.98,k:.85,c:.55}],
+    cities:[{id:'tpe',name:'Taipei',f:1,e:1,k:1,c:.85},{id:'txg',name:'Taichung',f:.99,e:.98,k:.9,c:.6},{id:'khh',name:'Kaohsiung',f:.99,e:.98,k:.85,c:.55},{id:'tnn',name:'Tainan',f:.99,e:.97,k:.8,c:.5},{id:'hsc',name:'Hsinchu',f:1,e:1,k:.85,c:.65},{id:'cyc',name:'Chiayi',f:.99,e:.97,k:.7,c:.4},{id:'ptc',name:'Pingtung',f:.99,e:.97,k:.65,c:.35}],
     v:{
       compact:{
         ev:{name:'MG4 / Nissan Leaf',price:30000,eff:6.5,m:190,i:580,t:0},
@@ -440,6 +471,10 @@ const C = {
         ev:{name:'Tesla Model Y / bZ4X',price:42500,eff:5.5,m:260,i:880,t:0},
         ice:{name:'Toyota RAV4',price:32000,kpl:12,m:490,i:640,t:220},
         hybrid:{name:'Toyota RAV4 HEV',price:37000,kpl:19,m:410,i:690,t:150}},
+      mpv:{
+        ev:{name:'Denza D9 EV / Maxus MIFA 9',price:62000,eff:4.2,m:300,i:950,t:0},
+        ice:{name:'Toyota Noah HEV',price:38000,kpl:18,m:460,i:620,t:180},
+        hybrid:{name:'Toyota Voxy HEV',price:42000,kpl:18,m:460,i:660,t:150}},
       motorbike_commuter:{
         ev:{name:'Gogoro Jego',price:650,eff:30,m:15,i:40,t:0},
         ice:{name:'Yamaha Jog / SYM',price:700,kpl:45,m:55,i:35,t:8}},
@@ -447,7 +482,7 @@ const C = {
         ev:{name:'Gogoro CrossOver / S2',price:1800,eff:20,m:20,i:60,t:0},
         ice:{name:'Yamaha NMAX / Honda PCX',price:2500,kpl:35,m:80,i:60,t:12}},
     },
-    policy:{sub:'Commodity tax exemption NT$70-140K',duty:'Commodity + license plate tax waived to 2030',tax:'EV exempt fuel tax + plate tax',chrg:'14K+ chargers; Gogoro 2,400+ swap stations',note:'Gogoro dominates 2W EV with battery swap (6 seconds). 2,400+ GoStations. Tesla 58% of car EV share.'}
+    policy:{sub:'Commodity tax exemption NT$70-140K',duty:'Commodity + license plate tax waived to 2030',tax:'EV exempt fuel tax + plate tax',chrg:'14K+ chargers; Gogoro 2,400+ swap stations',note:'Gogoro dominates 2W with 6-sec battery swap. Tesla 58% car EV share. Taxi fleet mostly Toyota Wish/Noah hybrid.'}
   },
 };
 
