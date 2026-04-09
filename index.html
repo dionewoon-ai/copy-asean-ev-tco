@@ -570,15 +570,16 @@ function wireSliders(){
   });
   $('usecase').addEventListener('change',()=>{
     const u=$('usecase').value,cc=C[curC];
-    if(u==='taxi'){$('annualKm').value=cc.avgKm*3;$('homeRatio').value=40;$('chargesWeek').value=10;}
-    else if(u==='fleet'){$('annualKm').value=cc.avgKm*2.5;$('homeRatio').value=30;$('chargesWeek').value=8;}
-    else{$('annualKm').value=cc.avgKm;$('homeRatio').value=70;$('chargesWeek').value=3;}
+    if(u==='taxi'){$('annualKm').value=cc.avgKm*3;$('homeRatio').value=40;$('ownerYears').value=5;$('evResid').value=25;$('iceResid').value=35;}
+    else if(u==='fleet'){$('annualKm').value=cc.avgKm*2.5;$('homeRatio').value=30;$('ownerYears').value=5;$('evResid').value=25;$('iceResid').value=35;}
+    else{$('annualKm').value=cc.avgKm;$('homeRatio').value=70;$('ownerYears').value=10;$('evResid').value=cc.evR;$('iceResid').value=cc.iceR;}
     updDisp();render();
   });
   $('segment').addEventListener('change',()=>{
-    const s=$('segment').value;
-    if(s.startsWith('motorbike')){$('ownerYears').value=5;$('evResid').value=20;$('iceResid').value=30;}
-    else{$('ownerYears').value=10;$('evResid').value=C[curC].evR;$('iceResid').value=C[curC].iceR;}
+    const s=$('segment').value,u=$('usecase').value;
+    const isFleet=u==='taxi'||u==='fleet';
+    if(s.startsWith('motorbike')){$('ownerYears').value=isFleet?3:5;$('evResid').value=isFleet?15:20;$('iceResid').value=isFleet?20:30;}
+    else{$('ownerYears').value=isFleet?5:10;$('evResid').value=isFleet?25:C[curC].evR;$('iceResid').value=isFleet?35:C[curC].iceR;}
     updDisp();render();
   });
 }
