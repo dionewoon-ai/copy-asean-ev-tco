@@ -131,27 +131,50 @@ footer a{color:var(--accent);text-decoration:none}
         <input type="range" id="fuelInflation" min="0" max="10" step="0.5" value="3">
       </div>
       <div class="control-group">
-        <h3>Residual & Charging</h3>
+        <h3>Residual Value</h3>
         <div class="control-row"><label>EV residual (%)</label><span class="value" id="evResidVal">40%</span></div>
         <input type="range" id="evResid" min="5" max="70" step="1" value="40">
         <div class="control-row"><label>ICE residual (%)</label><span class="value" id="iceResidVal">48%</span></div>
         <input type="range" id="iceResid" min="10" max="70" step="1" value="48">
-        <div class="control-row"><label>Driver hourly earnings (USD)</label><span class="value" id="hourlyVal">$3.0</span></div>
+      </div>
+      <div class="control-group">
+        <h3>Charging Reality (for fleet/taxi)</h3>
+        <div class="control-row"><label>Driver hourly earnings</label><span class="value" id="hourlyVal">$3.0</span></div>
         <input type="range" id="hourlyEarn" min="0.5" max="15" step="0.25" value="3">
-        <div class="control-row"><label>Charges per week (fleet/taxi)</label><span class="value" id="chargesVal">5</span></div>
-        <input type="range" id="chargesWeek" min="0" max="14" step="1" value="5">
+        <div class="control-row"><label>% DC fast charger access</label><span class="value" id="dcAccessVal">40%</span></div>
+        <input type="range" id="dcAccess" min="0" max="100" step="5" value="40">
+        <div class="control-row"><label>Avg queue wait at charger (min)</label><span class="value" id="queueVal">15</span></div>
+        <input type="range" id="queueWait" min="0" max="60" step="5" value="15">
+        <div class="control-row"><label>Has home overnight charging?</label><span class="value" id="homeChgVal">Yes</span></div>
+        <input type="range" id="homeChgAvail" min="0" max="1" step="1" value="1">
       </div>
     </div>
 
     <!-- Charging downtime box -->
     <div class="downtime-box" id="downtimeBox">
-      <h4>Charging Downtime Impact (Fleet/Taxi)</h4>
-      <div class="row"><span class="lbl">EV charge time per session</span><span class="val" id="dtChargeTime">—</span></div>
-      <div class="row"><span class="lbl">ICE refuel time per session</span><span class="val" id="dtRefuelTime">—</span></div>
-      <div class="row"><span class="lbl">Extra downtime per session</span><span class="val" id="dtExtra">—</span></div>
-      <div class="row"><span class="lbl">Annual lost earning time</span><span class="val" id="dtAnnualHrs">—</span></div>
-      <div class="row"><span class="lbl">Annual opportunity cost</span><span class="val ev-color" id="dtAnnualCost">—</span></div>
-      <div class="row"><span class="lbl">Battery swap available?</span><span class="val" id="dtSwap">—</span></div>
+      <h4>Charging Reality & Downtime Impact</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
+        <div>
+          <div class="row"><span class="lbl">Daily km (this use case)</span><span class="val" id="dtDailyKm">—</span></div>
+          <div class="row"><span class="lbl">EV range per full charge</span><span class="val" id="dtRange">—</span></div>
+          <div class="row"><span class="lbl">Charges needed per day</span><span class="val" id="dtChargesDay">—</span></div>
+          <div class="row"><span class="lbl">Home overnight covers?</span><span class="val" id="dtHomeCovers">—</span></div>
+          <div class="row"><span class="lbl">Mid-shift charges needed</span><span class="val" id="dtMidShift">—</span></div>
+        </div>
+        <div>
+          <div class="row"><span class="lbl">DC fast charge (10→80%)</span><span class="val" id="dtDCTime">—</span></div>
+          <div class="row"><span class="lbl">AC Level 2 charge (full)</span><span class="val" id="dtACTime">—</span></div>
+          <div class="row"><span class="lbl">Avg queue wait at charger</span><span class="val" id="dtQueue">—</span></div>
+          <div class="row"><span class="lbl">Blended charge session time</span><span class="val" id="dtBlended">—</span></div>
+          <div class="row"><span class="lbl">Battery swap available?</span><span class="val" id="dtSwap">—</span></div>
+        </div>
+      </div>
+      <div style="margin-top:.6rem;padding-top:.5rem;border-top:1px solid var(--border)">
+        <div class="row"><span class="lbl">ICE refueling: total time/day</span><span class="val" id="dtIceDay">—</span></div>
+        <div class="row"><span class="lbl">EV charging: total work-hours lost/day</span><span class="val ice-color" id="dtEvDay">—</span></div>
+        <div class="row"><span class="lbl">Annual extra downtime vs ICE</span><span class="val ice-color" id="dtAnnualHrs">—</span></div>
+        <div class="row"><span class="lbl" style="font-weight:600">Annual opportunity cost (lost earnings)</span><span class="val ice-color" style="font-size:1.1rem" id="dtAnnualCost">—</span></div>
+      </div>
     </div>
 
     <div class="insights">
@@ -505,6 +528,10 @@ function selC(c){
   $('annualKm').value=cc.avgKm;$('evSubsidy').value=cc.sub;$('evSubsidy').max=Math.max(20000,cc.sub*3);
   $('interestRate').value=cc.int;$('fuelInflation').value=cc.fInf;
   $('evResid').value=cc.evR;$('iceResid').value=cc.iceR;$('hourlyEarn').value=cc.hourly;
+  // Set DC access and queue based on first city's charging score
+  const c0=cc.cities[0];
+  $('dcAccess').value=Math.round(c0.c*60);// tier-1 capital: ~50-60% DC access
+  $('queueWait').value=Math.round((1-c0.c)*30+5);// better infra = less wait
   // Hide motorbike options for SG
   const segEl=$('segment');
   const hasBikes=!!cc.v.motorbike_commuter;
@@ -526,13 +553,21 @@ const sliders=[
   {id:'evResid',d:'evResidVal',f:v=>v+'%'},
   {id:'iceResid',d:'iceResidVal',f:v=>v+'%'},
   {id:'hourlyEarn',d:'hourlyVal',f:v=>'$'+Number(v).toFixed(1)},
-  {id:'chargesWeek',d:'chargesVal',f:v=>v},
+  {id:'dcAccess',d:'dcAccessVal',f:v=>v+'%'},
+  {id:'queueWait',d:'queueVal',f:v=>v+' min'},
+  {id:'homeChgAvail',d:'homeChgVal',f:v=>+v?'Yes':'No'},
 ];
 function updDisp(){sliders.forEach(s=>{$(s.d).textContent=s.f($(s.id).value);});}
 
 function wireSliders(){
   sliders.forEach(s=>{$(s.id).addEventListener('input',()=>{$(s.d).textContent=s.f($(s.id).value);render();});});
-  $('city').addEventListener('change',render);
+  $('city').addEventListener('change',()=>{
+    // Update DC access & queue based on selected city's charging score
+    const cc=C[curC],ci=cc.cities.find(c=>c.id===$('city').value)||cc.cities[0];
+    $('dcAccess').value=Math.round(ci.c*60);
+    $('queueWait').value=Math.round((1-ci.c)*30+5);
+    updDisp();render();
+  });
   $('usecase').addEventListener('change',()=>{
     const u=$('usecase').value,cc=C[curC];
     if(u==='taxi'){$('annualKm').value=cc.avgKm*3;$('homeRatio').value=40;$('chargesWeek').value=10;}
@@ -549,20 +584,71 @@ function wireSliders(){
 }
 
 // ========== CALCULATION ==========
-function getP(){return{country:curC,city:$('city').value,uc:$('usecase').value,seg:$('segment').value,km:+$('annualKm').value,gas:+$('gasPrice').value,eH:+$('elecHome').value,eP:+$('elecPub').value,hr:+$('homeRatio').value/100,yrs:+$('ownerYears').value,sub:+$('evSubsidy').value,int:+$('interestRate').value/100,fi:+$('fuelInflation').value/100,evR:+$('evResid').value/100,iceR:+$('iceResid').value/100,earn:+$('hourlyEarn').value,chgWk:+$('chargesWeek').value,bd:0.02};}
+function getP(){return{country:curC,city:$('city').value,uc:$('usecase').value,seg:$('segment').value,km:+$('annualKm').value,gas:+$('gasPrice').value,eH:+$('elecHome').value,eP:+$('elecPub').value,hr:+$('homeRatio').value/100,yrs:+$('ownerYears').value,sub:+$('evSubsidy').value,int:+$('interestRate').value/100,fi:+$('fuelInflation').value/100,evR:+$('evResid').value/100,iceR:+$('iceResid').value/100,earn:+$('hourlyEarn').value,dcAcc:+$('dcAccess').value/100,qWait:+$('queueWait').value,homeChg:+$('homeChgAvail').value,bd:0.02};}
+
+// Realistic charging model
+// Vehicle ranges (km per full charge) and charge times
+const CHARGE_SPECS={
+  compact:{range:350,dcMin:45,acHrs:7,battKwh:55},
+  midsize:{range:400,dcMin:40,acHrs:8,battKwh:70},
+  suv:{range:380,dcMin:45,acHrs:9,battKwh:75},
+  mpv:{range:420,dcMin:50,acHrs:10,battKwh:72},
+  motorbike_commuter:{range:80,dcMin:0,acHrs:5,battKwh:2.5},
+  motorbike_premium:{range:120,dcMin:0,acHrs:6,battKwh:4},
+};
 
 function calcDowntime(p){
-  const cc=C[p.country],isBike=p.seg.startsWith('motorbike');
-  const ucm=UC[p.uc];
-  if(ucm.dt===0)return{evMin:0,iceMin:0,extra:0,annualHrs:0,annualCost:0,swap:false};
-  const evMin=isBike?(cc.bikeSwapMin>0?cc.bikeSwapMin:cc.bikeChargeMin):cc.dcChargeMin;
-  const iceMin=cc.refuelMin;
-  const extra=Math.max(0,evMin-iceMin);
-  const sessionsYr=p.chgWk*52;
-  const annualHrs=(extra*sessionsYr)/60;
-  const annualCost=annualHrs*p.earn;
-  const swap=isBike?cc.swapAvail:(false);
-  return{evMin,iceMin,extra,annualHrs:Math.round(annualHrs),annualCost,swap};
+  const cc=C[p.country],isBike=p.seg.startsWith('motorbike'),ucm=UC[p.uc];
+  const city=cc.cities.find(c=>c.id===p.city)||cc.cities[0];
+  const spec=CHARGE_SPECS[p.seg]||CHARGE_SPECS.compact;
+  const dailyKm=p.km*city.k*ucm.km/365;
+  const evRange=spec.range;
+  const chargesPerDay=dailyKm/evRange;// fractional
+  const homeCovers=p.homeChg&&dailyKm<=evRange*0.85;// overnight covers next day?
+  // Mid-shift charges needed (charges beyond what overnight handles)
+  const midShiftCharges=homeCovers?Math.max(0,chargesPerDay-1):chargesPerDay;
+
+  // For motorbikes: battery swap vs plug-in
+  const bikeSwap=isBike&&cc.swapAvail;
+
+  // For each mid-shift charge: blended time
+  let chargeTimePerSession;
+  if(bikeSwap){
+    chargeTimePerSession=5;// swap station ~5 min including walk
+  }else if(isBike){
+    chargeTimePerSession=spec.acHrs*60*0.7;// need ~70% charge, AC only for bikes
+  }else{
+    // Cars: blend of DC fast and AC based on dcAccess %
+    const dcTime=spec.dcMin+p.qWait;// DC charge + queue wait
+    const acTime=spec.acHrs*60*0.5+p.qWait;// ~50% AC charge mid-day + wait
+    chargeTimePerSession=p.dcAcc*dcTime+(1-p.dcAcc)*acTime;
+  }
+
+  // ICE refueling
+  const iceRefuelsPerDay=dailyKm/500;// ICE ~500km range per tank
+  const iceTimePerDay=iceRefuelsPerDay*8;// 8 min per refuel including stop
+
+  // EV mid-shift charging time per day (work hours lost)
+  const evMidShiftMinPerDay=midShiftCharges*chargeTimePerSession;
+
+  // Extra downtime = EV charging during work hours - ICE refueling
+  const extraMinPerDay=Math.max(0,evMidShiftMinPerDay-iceTimePerDay);
+  const workDaysYr=ucm.dt===0?0:300;// fleet/taxi work ~300 days/yr
+  const annualExtraHrs=(extraMinPerDay*workDaysYr)/60;
+  const annualCost=annualExtraHrs*p.earn;
+
+  return{
+    dailyKm:Math.round(dailyKm),evRange,chargesPerDay:chargesPerDay.toFixed(1),
+    homeCovers,midShiftCharges:Math.max(0,midShiftCharges).toFixed(1),
+    dcTimeMin:isBike?0:spec.dcMin,acTimeHrs:spec.acHrs,
+    queueMin:p.qWait,blendedMin:Math.round(chargeTimePerSession),
+    swap:bikeSwap,swapAvailCountry:cc.swapAvail,
+    iceMinPerDay:Math.round(iceTimePerDay),
+    evMinPerDay:Math.round(evMidShiftMinPerDay),
+    extraMinPerDay:Math.round(extraMinPerDay),
+    annualHrs:Math.round(annualExtraHrs),annualCost,
+    isPersonal:ucm.dt===0
+  };
 }
 
 function calc(p){
@@ -597,7 +683,8 @@ function calc(p){
 
 function quickCalc(ck,seg){
   const cc=C[ck],isBike=seg.startsWith('motorbike'),yrs=isBike?5:10;
-  return calc({country:ck,city:cc.cities[0].id,uc:'personal',seg,km:cc.avgKm,gas:cc.gas,eH:cc.eH,eP:cc.eP,hr:.7,yrs,sub:cc.sub,int:cc.int/100,fi:cc.fInf/100,evR:cc.evR/100,iceR:cc.iceR/100,earn:cc.hourly,chgWk:3,bd:.02});
+  const c0=cc.cities[0];
+  return calc({country:ck,city:c0.id,uc:'personal',seg,km:cc.avgKm,gas:cc.gas,eH:cc.eH,eP:cc.eP,hr:.7,yrs,sub:cc.sub,int:cc.int/100,fi:cc.fInf/100,evR:cc.evR/100,iceR:cc.iceR/100,earn:cc.hourly,dcAcc:c0.c*.6,qWait:Math.round((1-c0.c)*30+5),homeChg:1,bd:.02});
 }
 
 // ========== CHARTS ==========
@@ -624,17 +711,23 @@ function render(){
   const lbls=Array.from({length:yrs+1},(_,i)=>i===0?'Buy':'Y'+i);
   const cc=C[curC];
 
-  // Downtime box
+  // Downtime box — always show (but flag personal as minimal impact)
   const dtBox=$('downtimeBox');
-  if(p.uc==='personal'){dtBox.style.display='none';}else{
-    dtBox.style.display='';
-    $('dtChargeTime').textContent=dt.evMin+(dt.evMin<10?' min (swap!)':' min');
-    $('dtRefuelTime').textContent=dt.iceMin+' min';
-    $('dtExtra').textContent=dt.extra+' min';
-    $('dtAnnualHrs').textContent=dt.annualHrs+' hrs ('+p.chgWk+'x/wk)';
-    $('dtAnnualCost').textContent=fmt$(dt.annualCost)+'/yr opportunity cost';
-    $('dtSwap').textContent=dt.swap?(isBike?'Yes (reduces to ~5 min)':'Limited'):'No — full charge required';
-  }
+  dtBox.style.display='';
+  $('dtDailyKm').textContent=dt.dailyKm+' km/day';
+  $('dtRange').textContent=dt.evRange+' km';
+  $('dtChargesDay').textContent=dt.chargesPerDay+(+dt.chargesPerDay<=1?' (overnight may suffice)':'');
+  $('dtHomeCovers').textContent=dt.homeCovers?(p.homeChg?'Yes — charge overnight, drive all day':'No home charger'):'No — range insufficient for daily km';
+  $('dtMidShift').textContent=+dt.midShiftCharges===0?'None (overnight covers it)':dt.midShiftCharges+' session(s) during work hours';
+  $('dtDCTime').textContent=dt.dcTimeMin?dt.dcTimeMin+' min (10→80%)':'N/A (motorbike)';
+  $('dtACTime').textContent=dt.acTimeHrs+' hrs (full charge)';
+  $('dtQueue').textContent=dt.queueMin+' min avg wait';
+  $('dtBlended').textContent=dt.blendedMin+' min'+((dt.swap)?' (with battery swap!)':'');
+  $('dtSwap').textContent=dt.swap?'Yes — ~5 min swap!':(dt.swapAvailCountry?'Available in country (not all cities)':'No');
+  $('dtIceDay').textContent=dt.iceMinPerDay+' min/day (quick refueling)';
+  $('dtEvDay').textContent=dt.isPersonal?'N/A (charge overnight)':(dt.evMinPerDay+' min/day = '+(dt.evMinPerDay/60).toFixed(1)+' hrs lost');
+  $('dtAnnualHrs').textContent=dt.isPersonal?'Minimal (overnight charging)':dt.annualHrs+' hrs/yr lost to charging';
+  $('dtAnnualCost').textContent=dt.isPersonal?'$0 (no lost earnings)':fmt$(dt.annualCost)+'/yr in lost earnings';
 
   // Insights
   let bk=null;for(let i=1;i<=yrs;i++){if(d.ev.cumA[i]<d.ice.cumA[i]){bk=i;break;}}
@@ -694,9 +787,9 @@ function render(){
 
   // Sensitivity
   const bS=d.ice.cumA[yrs]-d.ev.cumA[yrs];
-  const sp=[{l:'Annual km',k:'annualKm'},{l:'Gas price',k:'gasPrice'},{l:'Elec (home)',k:'elecHome'},{l:'EV subsidy',k:'evSubsidy'},{l:'EV residual',k:'evResid'},{l:'ICE residual',k:'iceResid'},{l:'Fuel inflation',k:'fuelInflation'},{l:'Hourly earnings',k:'hourlyEarn'}];
+  const sp=[{l:'Annual km',k:'annualKm'},{l:'Gas price',k:'gasPrice'},{l:'Elec (home)',k:'elecHome'},{l:'EV subsidy',k:'evSubsidy'},{l:'EV residual',k:'evResid'},{l:'ICE residual',k:'iceResid'},{l:'Fuel inflation',k:'fuelInflation'},{l:'Hourly earnings',k:'hourlyEarn'},{l:'DC charger access',k:'dcAccess'},{l:'Queue wait time',k:'queueWait'}];
   const imp=sp.map(s=>{const pp=getP(),o=+$(s.k).value*1.2;
-    if(s.k==='annualKm')pp.km=o;else if(s.k==='gasPrice')pp.gas=o;else if(s.k==='elecHome')pp.eH=o;else if(s.k==='evSubsidy')pp.sub=o;else if(s.k==='evResid')pp.evR=o/100;else if(s.k==='iceResid')pp.iceR=o/100;else if(s.k==='fuelInflation')pp.fi=o/100;else if(s.k==='hourlyEarn')pp.earn=o;
+    if(s.k==='annualKm')pp.km=o;else if(s.k==='gasPrice')pp.gas=o;else if(s.k==='elecHome')pp.eH=o;else if(s.k==='evSubsidy')pp.sub=o;else if(s.k==='evResid')pp.evR=o/100;else if(s.k==='iceResid')pp.iceR=o/100;else if(s.k==='fuelInflation')pp.fi=o/100;else if(s.k==='hourlyEarn')pp.earn=o;else if(s.k==='dcAccess')pp.dcAcc=Math.min(o/100,1);else if(s.k==='queueWait')pp.qWait=o;
     const d2=calc(pp);if(!d2)return{l:s.l,v:0};return{l:s.l,v:(d2.ice.cumA[yrs]-d2.ev.cumA[yrs])-bS};
   }).sort((a,b)=>Math.abs(b.v)-Math.abs(a.v));
   ch.sens.data={labels:imp.map(i=>i.l),datasets:[{label:'Impact',data:imp.map(i=>i.v),backgroundColor:imp.map(i=>i.v>0?'#10b981':'#ef4444')}]};
