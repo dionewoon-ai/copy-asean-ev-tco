@@ -177,6 +177,35 @@ footer a{color:var(--accent);text-decoration:none}
       </div>
     </div>
 
+    <!-- Infrastructure bottleneck -->
+    <div class="downtime-box" id="infraBox" style="border-color:#ef444444">
+      <h4 style="color:var(--ice)">Charging Infrastructure Capacity Constraint</h4>
+      <div class="control-row" style="margin-bottom:.4rem">
+        <label style="font-size:.8rem;color:var(--muted)">Planned EV fleet size in this city</label>
+        <span class="value" style="font-size:.85rem" id="fleetVal">500</span>
+      </div>
+      <input type="range" id="fleetSize" min="10" max="20000" step="10" value="500" style="margin-bottom:.6rem">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
+        <div>
+          <div class="row"><span class="lbl">DC fast chargers in city</span><span class="val" id="infDC">—</span></div>
+          <div class="row"><span class="lbl">AC chargers in city</span><span class="val" id="infAC">—</span></div>
+          <div class="row"><span class="lbl">DC sessions/day capacity (7/charger)</span><span class="val" id="infDCCap">—</span></div>
+          <div class="row"><span class="lbl">AC sessions/day capacity (2.5/charger)</span><span class="val" id="infACCap">—</span></div>
+        </div>
+        <div>
+          <div class="row"><span class="lbl">Max EVs supportable (fleet use)</span><span class="val ev-color" id="infMaxEV">—</span></div>
+          <div class="row"><span class="lbl">Your fleet vs capacity</span><span class="val" id="infUtil">—</span></div>
+          <div class="row"><span class="lbl">Charger contention level</span><span class="val" id="infContention">—</span></div>
+          <div class="row"><span class="lbl">Est. extra queue time from contention</span><span class="val" id="infExtraQueue">—</span></div>
+        </div>
+      </div>
+      <div style="margin-top:.5rem;padding-top:.4rem;border-top:1px solid var(--border)">
+        <div class="row"><span class="lbl" style="font-weight:600">Fleet deployment verdict</span><span class="val" id="infVerdict" style="font-size:.95rem">—</span></div>
+        <div class="row"><span class="lbl">Chargers needed for your fleet</span><span class="val" id="infNeeded">—</span></div>
+        <div class="row"><span class="lbl">Charger gap (build or partner)</span><span class="val" id="infGap">—</span></div>
+      </div>
+    </div>
+
     <div class="insights">
       <div class="insight-card"><div class="label">Breakeven (EV vs ICE)</div><div class="big ev-color" id="breakeven">—</div><div class="sub" id="breakevenSub">—</div></div>
       <div class="insight-card"><div class="label">Total Savings</div><div class="big ev-color" id="savings">—</div><div class="sub">Over ownership period</div></div>
@@ -233,7 +262,7 @@ const C = {
     gas:1.14, diesel:0.90, eH:0.13, eP:0.20, evSh:21, sub:2860, int:3.5, fInf:3,
     avgKm:15000, chrg:12000, chrgScore:.75, evR:40, iceR:48, hybR:44,
     hourly:2.5, swapAvail:false, dcChargeMin:35, refuelMin:5, bikeChargeMin:300, bikeSwapMin:0,
-    cities:[{id:'bkk',name:'Bangkok',f:1,e:1,k:1,c:.9},{id:'cnx',name:'Chiang Mai',f:1.02,e:.98,k:.8,c:.6},{id:'hkt',name:'Phuket',f:1.03,e:1.01,k:.85,c:.5},{id:'pty',name:'Pattaya',f:1.01,e:1,k:.9,c:.7},{id:'kkn',name:'Khon Kaen',f:1.01,e:.97,k:.7,c:.4},{id:'hdy',name:'Hat Yai',f:1.02,e:.98,k:.75,c:.35},{id:'nkr',name:'Nakhon Ratchasima',f:1.01,e:.97,k:.7,c:.35},{id:'udi',name:'Udon Thani',f:1.02,e:.98,k:.65,c:.3}],
+    cities:[{id:'bkk',name:'Bangkok',f:1,e:1,k:1,c:.9,dc:2800,ac:4500},{id:'cnx',name:'Chiang Mai',f:1.02,e:.98,k:.8,c:.6,dc:350,ac:600},{id:'hkt',name:'Phuket',f:1.03,e:1.01,k:.85,c:.5,dc:200,ac:350},{id:'pty',name:'Pattaya',f:1.01,e:1,k:.9,c:.7,dc:300,ac:450},{id:'kkn',name:'Khon Kaen',f:1.01,e:.97,k:.7,c:.4,dc:80,ac:150},{id:'hdy',name:'Hat Yai',f:1.02,e:.98,k:.75,c:.35,dc:60,ac:120},{id:'nkr',name:'Nakhon Ratchasima',f:1.01,e:.97,k:.7,c:.35,dc:50,ac:100},{id:'udi',name:'Udon Thani',f:1.02,e:.98,k:.65,c:.3,dc:30,ac:70}],
     v:{
       compact:{
         ev:{name:'BYD Dolphin ER (2026)',price:20570,eff:6.5,m:170,i:510,t:43},
@@ -265,7 +294,7 @@ const C = {
     gas:0.96, diesel:0.84, eH:0.084, eP:0.15, evSh:18, sub:1200, int:7, fInf:4,
     avgKm:12000, chrg:150000, chrgScore:.85, evR:35, iceR:50, hybR:45,
     hourly:2.0, swapAvail:true, dcChargeMin:40, refuelMin:5, bikeChargeMin:240, bikeSwapMin:5,
-    cities:[{id:'hn',name:'Hanoi',f:1,e:1,k:1,c:.9},{id:'hcm',name:'Ho Chi Minh City',f:1,e:1,k:1.1,c:.9},{id:'dn',name:'Da Nang',f:1.01,e:.98,k:.8,c:.6},{id:'hp',name:'Hai Phong',f:1.01,e:.99,k:.75,c:.5},{id:'ct',name:'Can Tho',f:1.02,e:.99,k:.7,c:.4},{id:'nt',name:'Nha Trang',f:1.02,e:1,k:.7,c:.45},{id:'hue',name:'Hue',f:1.01,e:.98,k:.65,c:.35}],
+    cities:[{id:'hn',name:'Hanoi',f:1,e:1,k:1,c:.9,dc:3000,ac:45000},{id:'hcm',name:'Ho Chi Minh City',f:1,e:1,k:1.1,c:.9,dc:3500,ac:50000},{id:'dn',name:'Da Nang',f:1.01,e:.98,k:.8,c:.6,dc:400,ac:5000},{id:'hp',name:'Hai Phong',f:1.01,e:.99,k:.75,c:.5,dc:250,ac:3000},{id:'ct',name:'Can Tho',f:1.02,e:.99,k:.7,c:.4,dc:100,ac:1500},{id:'nt',name:'Nha Trang',f:1.02,e:1,k:.7,c:.45,dc:120,ac:1800},{id:'hue',name:'Hue',f:1.01,e:.98,k:.65,c:.35,dc:60,ac:800}],
     v:{
       compact:{
         ev:{name:'BYD Dolphin (659M VND)',price:25950,eff:6.5,m:140,i:400,t:0},
@@ -296,7 +325,7 @@ const C = {
     gas:0.78, diesel:0.52, eH:0.086, eP:0.16, evSh:13, sub:4400, int:6, fInf:3,
     avgKm:12000, chrg:4500, chrgScore:.45, evR:35, iceR:50, hybR:45,
     hourly:1.8, swapAvail:true, dcChargeMin:40, refuelMin:5, bikeChargeMin:270, bikeSwapMin:5,
-    cities:[{id:'jkt',name:'Jakarta',f:1,e:1,k:1,c:.7},{id:'sby',name:'Surabaya',f:.98,e:.98,k:.85,c:.4},{id:'bdg',name:'Bandung',f:.98,e:.97,k:.8,c:.35},{id:'bal',name:'Bali (Denpasar)',f:1.02,e:1,k:.7,c:.5},{id:'mdn',name:'Medan',f:.99,e:.98,k:.8,c:.3},{id:'smg',name:'Semarang',f:.98,e:.97,k:.8,c:.35},{id:'mks',name:'Makassar',f:1.01,e:.99,k:.75,c:.25},{id:'yk',name:'Yogyakarta',f:.97,e:.97,k:.75,c:.3}],
+    cities:[{id:'jkt',name:'Jakarta',f:1,e:1,k:1,c:.7,dc:800,ac:2000},{id:'sby',name:'Surabaya',f:.98,e:.98,k:.85,c:.4,dc:120,ac:300},{id:'bdg',name:'Bandung',f:.98,e:.97,k:.8,c:.35,dc:80,ac:200},{id:'bal',name:'Bali (Denpasar)',f:1.02,e:1,k:.7,c:.5,dc:150,ac:350},{id:'mdn',name:'Medan',f:.99,e:.98,k:.8,c:.3,dc:50,ac:120},{id:'smg',name:'Semarang',f:.98,e:.97,k:.8,c:.35,dc:60,ac:150},{id:'mks',name:'Makassar',f:1.01,e:.99,k:.75,c:.25,dc:30,ac:80},{id:'yk',name:'Yogyakarta',f:.97,e:.97,k:.75,c:.3,dc:40,ac:100}],
     v:{
       compact:{
         ev:{name:'Wuling Air EV Lite',price:10700,eff:7.5,m:120,i:260,t:0},
@@ -328,7 +357,7 @@ const C = {
     gas:0.47, diesel:0.50, eH:0.102, eP:0.18, evSh:4, sub:0, int:3.5, fInf:5,
     avgKm:15000, chrg:3000, chrgScore:.5, evR:38, iceR:52, hybR:48,
     hourly:2.5, swapAvail:false, dcChargeMin:35, refuelMin:5, bikeChargeMin:300, bikeSwapMin:0,
-    cities:[{id:'kl',name:'Kuala Lumpur',f:1,e:1,k:1,c:.7},{id:'pg',name:'Penang',f:1,e:1,k:.85,c:.5},{id:'jb',name:'Johor Bahru',f:1,e:1,k:.9,c:.55},{id:'ip',name:'Ipoh',f:1,e:.98,k:.7,c:.35},{id:'kb',name:'Kota Bharu',f:1.01,e:.99,k:.6,c:.2},{id:'kk',name:'Kota Kinabalu',f:1.02,e:1.01,k:.65,c:.2},{id:'kch',name:'Kuching',f:1.02,e:1,k:.65,c:.25},{id:'mlk',name:'Melaka',f:1,e:1,k:.75,c:.4}],
+    cities:[{id:'kl',name:'Kuala Lumpur',f:1,e:1,k:1,c:.7,dc:600,ac:1500},{id:'pg',name:'Penang',f:1,e:1,k:.85,c:.5,dc:120,ac:300},{id:'jb',name:'Johor Bahru',f:1,e:1,k:.9,c:.55,dc:150,ac:350},{id:'ip',name:'Ipoh',f:1,e:.98,k:.7,c:.35,dc:40,ac:100},{id:'kb',name:'Kota Bharu',f:1.01,e:.99,k:.6,c:.2,dc:15,ac:40},{id:'kk',name:'Kota Kinabalu',f:1.02,e:1.01,k:.65,c:.2,dc:20,ac:50},{id:'kch',name:'Kuching',f:1.02,e:1,k:.65,c:.25,dc:25,ac:60},{id:'mlk',name:'Melaka',f:1,e:1,k:.75,c:.4,dc:50,ac:120}],
     v:{
       compact:{
         ev:{name:'BYD Atto 3 Ultra',price:27820,eff:6.5,m:150,i:480,t:10},
@@ -360,7 +389,7 @@ const C = {
     gas:2.10, diesel:2.00, eH:0.22, eP:0.48, evSh:40, sub:11000, int:2.5, fInf:2,
     avgKm:12000, chrg:5000, chrgScore:.9, evR:30, iceR:35, hybR:32,
     hourly:8, swapAvail:false, dcChargeMin:30, refuelMin:5, bikeChargeMin:0, bikeSwapMin:0,
-    cities:[{id:'sg',name:'Singapore',f:1,e:1,k:1,c:.95}],
+    cities:[{id:'sg',name:'Singapore',f:1,e:1,k:1,c:.95,dc:1200,ac:3800}],
     v:{
       compact:{
         ev:{name:'BYD Atto 3 (w/ COE)',price:134000,eff:6.5,m:450,i:2200,t:550},
@@ -386,7 +415,7 @@ const C = {
     gas:1.08, diesel:0.93, eH:0.23, eP:0.59, evSh:1.5, sub:0, int:6, fInf:4,
     avgKm:12000, chrg:500, chrgScore:.2, evR:30, iceR:50, hybR:45,
     hourly:2.0, swapAvail:false, dcChargeMin:40, refuelMin:5, bikeChargeMin:300, bikeSwapMin:0,
-    cities:[{id:'mnl',name:'Metro Manila',f:1,e:1,k:1,c:.4},{id:'ceb',name:'Cebu',f:1.02,e:1.02,k:.8,c:.2},{id:'dvo',name:'Davao',f:1.01,e:1.01,k:.7,c:.15},{id:'clk',name:'Clark/Angeles',f:1.01,e:1,k:.75,c:.15},{id:'ilo',name:'Iloilo',f:1.02,e:1.02,k:.65,c:.1},{id:'bcd',name:'Bacolod',f:1.02,e:1.02,k:.6,c:.08}],
+    cities:[{id:'mnl',name:'Metro Manila',f:1,e:1,k:1,c:.4,dc:120,ac:300},{id:'ceb',name:'Cebu',f:1.02,e:1.02,k:.8,c:.2,dc:20,ac:50},{id:'dvo',name:'Davao',f:1.01,e:1.01,k:.7,c:.15,dc:10,ac:30},{id:'clk',name:'Clark/Angeles',f:1.01,e:1,k:.75,c:.15,dc:10,ac:25},{id:'ilo',name:'Iloilo',f:1.02,e:1.02,k:.65,c:.1,dc:5,ac:15},{id:'bcd',name:'Bacolod',f:1.02,e:1.02,k:.6,c:.08,dc:3,ac:10}],
     v:{
       compact:{
         ev:{name:'BYD Seagull',price:15750,eff:7.0,m:140,i:370,t:40},
@@ -418,7 +447,7 @@ const C = {
     gas:1.25, diesel:1.05, eH:0.152, eP:0.25, evSh:0.8, sub:0, int:8, fInf:3,
     avgKm:10000, chrg:200, chrgScore:.15, evR:30, iceR:55, hybR:48,
     hourly:1.5, swapAvail:false, dcChargeMin:45, refuelMin:5, bikeChargeMin:300, bikeSwapMin:0,
-    cities:[{id:'pp',name:'Phnom Penh',f:1,e:1,k:1,c:.3},{id:'sr',name:'Siem Reap',f:1.03,e:1.05,k:.6,c:.1},{id:'btb',name:'Battambang',f:1.04,e:1.06,k:.5,c:.05},{id:'shv',name:'Sihanoukville',f:1.05,e:1.05,k:.55,c:.08}],
+    cities:[{id:'pp',name:'Phnom Penh',f:1,e:1,k:1,c:.3,dc:30,ac:150},{id:'sr',name:'Siem Reap',f:1.03,e:1.05,k:.6,c:.1,dc:5,ac:20},{id:'btb',name:'Battambang',f:1.04,e:1.06,k:.5,c:.05,dc:2,ac:8},{id:'shv',name:'Sihanoukville',f:1.05,e:1.05,k:.55,c:.08,dc:3,ac:15}],
     v:{
       compact:{
         ev:{name:'BYD Dolphin / MG4',price:25000,eff:6.5,m:150,i:380,t:50},
@@ -449,7 +478,7 @@ const C = {
     gas:0.84, diesel:0.80, eH:0.023, eP:0.10, evSh:0.3, sub:0, int:10, fInf:8,
     avgKm:8000, chrg:50, chrgScore:.05, evR:25, iceR:55, hybR:48,
     hourly:1.2, swapAvail:false, dcChargeMin:50, refuelMin:5, bikeChargeMin:360, bikeSwapMin:0,
-    cities:[{id:'ygn',name:'Yangon',f:1,e:1,k:1,c:.1},{id:'mdy',name:'Mandalay',f:1.02,e:1.05,k:.7,c:.03},{id:'npt',name:'Naypyidaw',f:1.01,e:1.02,k:.5,c:.02},{id:'mdl',name:'Mawlamyine',f:1.03,e:1.05,k:.45,c:.01}],
+    cities:[{id:'ygn',name:'Yangon',f:1,e:1,k:1,c:.1,dc:10,ac:30},{id:'mdy',name:'Mandalay',f:1.02,e:1.05,k:.7,c:.03,dc:2,ac:8},{id:'npt',name:'Naypyidaw',f:1.01,e:1.02,k:.5,c:.02,dc:1,ac:5},{id:'mdl',name:'Mawlamyine',f:1.03,e:1.05,k:.45,c:.01,dc:0,ac:2}],
     v:{
       compact:{
         ev:{name:'Chinese imports (BYD/MG)',price:28000,eff:6.5,m:140,i:340,t:40},
@@ -480,7 +509,7 @@ const C = {
     gas:0.96, diesel:0.84, eH:0.10, eP:0.22, evSh:9, sub:2500, int:3, fInf:2,
     avgKm:12000, chrg:14000, chrgScore:.7, evR:38, iceR:50, hybR:46,
     hourly:5, swapAvail:true, dcChargeMin:30, refuelMin:5, bikeChargeMin:0, bikeSwapMin:0.1,
-    cities:[{id:'tpe',name:'Taipei',f:1,e:1,k:1,c:.85},{id:'txg',name:'Taichung',f:.99,e:.98,k:.9,c:.6},{id:'khh',name:'Kaohsiung',f:.99,e:.98,k:.85,c:.55},{id:'tnn',name:'Tainan',f:.99,e:.97,k:.8,c:.5},{id:'hsc',name:'Hsinchu',f:1,e:1,k:.85,c:.65},{id:'cyc',name:'Chiayi',f:.99,e:.97,k:.7,c:.4},{id:'ptc',name:'Pingtung',f:.99,e:.97,k:.65,c:.35}],
+    cities:[{id:'tpe',name:'Taipei',f:1,e:1,k:1,c:.85,dc:2000,ac:6000},{id:'txg',name:'Taichung',f:.99,e:.98,k:.9,c:.6,dc:500,ac:1500},{id:'khh',name:'Kaohsiung',f:.99,e:.98,k:.85,c:.55,dc:400,ac:1200},{id:'tnn',name:'Tainan',f:.99,e:.97,k:.8,c:.5,dc:300,ac:900},{id:'hsc',name:'Hsinchu',f:1,e:1,k:.85,c:.65,dc:350,ac:1000},{id:'cyc',name:'Chiayi',f:.99,e:.97,k:.7,c:.4,dc:100,ac:300},{id:'ptc',name:'Pingtung',f:.99,e:.97,k:.65,c:.35,dc:80,ac:250}],
     v:{
       compact:{
         ev:{name:'MG4 / Nissan Leaf',price:30000,eff:6.5,m:190,i:580,t:0},
@@ -556,6 +585,7 @@ const sliders=[
   {id:'dcAccess',d:'dcAccessVal',f:v=>v+'%'},
   {id:'queueWait',d:'queueVal',f:v=>v+' min'},
   {id:'homeChgAvail',d:'homeChgVal',f:v=>+v?'Yes':'No'},
+  {id:'fleetSize',d:'fleetVal',f:v=>Number(v).toLocaleString()},
 ];
 function updDisp(){sliders.forEach(s=>{$(s.d).textContent=s.f($(s.id).value);});}
 
@@ -729,6 +759,46 @@ function render(){
   $('dtEvDay').textContent=dt.isPersonal?'N/A (charge overnight)':(dt.evMinPerDay+' min/day = '+(dt.evMinPerDay/60).toFixed(1)+' hrs lost');
   $('dtAnnualHrs').textContent=dt.isPersonal?'Minimal (overnight charging)':dt.annualHrs+' hrs/yr lost to charging';
   $('dtAnnualCost').textContent=dt.isPersonal?'$0 (no lost earnings)':fmt$(dt.annualCost)+'/yr in lost earnings';
+
+  // Infrastructure bottleneck
+  const fleet=+$('fleetSize').value;
+  const cityInf=city;
+  const dcCount=cityInf.dc||0, acCount=cityInf.ac||0;
+  // DC fast charger: ~7 sessions/day at healthy utilization (IEA data)
+  // AC charger: ~2.5 sessions/day (longer dwell time)
+  const dcCapDay=dcCount*7, acCapDay=acCount*2.5;
+  const totalSessionsDay=dcCapDay+acCapDay;
+  // Fleet EVs: each needs ~1-2 charges/day for ride-hail (use dt.chargesPerDay)
+  const fleetChargesDay=fleet*Math.max(0.5,+dt.chargesPerDay);
+  // But only mid-shift charges use public infra (home overnight doesn't count)
+  const fleetPublicChargesDay=fleet*Math.max(0.3,+dt.midShiftCharges);
+  // Max EVs the city can support at healthy utilization (<70% of capacity)
+  const maxEVHealthy=Math.round(totalSessionsDay*0.7/Math.max(0.3,+dt.chargesPerDay));
+  const maxEVAbsolute=Math.round(totalSessionsDay/Math.max(0.3,+dt.chargesPerDay));
+  const utilPct=totalSessionsDay>0?Math.round(fleetPublicChargesDay/totalSessionsDay*100):999;
+  let contention,contentionColor,verdict,verdictColor;
+  if(utilPct<30){contention='Low';contentionColor='#10b981';verdict='GO — infra supports this fleet';verdictColor='#10b981';}
+  else if(utilPct<60){contention='Moderate';contentionColor='#f59e0b';verdict='CAUTION — manageable but queue times rising';verdictColor='#f59e0b';}
+  else if(utilPct<85){contention='High';contentionColor='#ef4444';verdict='WARNING — drivers will face long queues';verdictColor='#ef4444';}
+  else{contention='Critical bottleneck';contentionColor='#ef4444';verdict='BLOCKED — infra cannot support this fleet';verdictColor='#ef4444';}
+  // Extra queue time from contention (exponential as utilization rises)
+  const extraQueueMin=utilPct<30?0:Math.round(Math.pow(utilPct/30,2.5)*3);
+  // Chargers needed for this fleet at healthy utilization
+  const chargersNeeded=Math.ceil(fleetPublicChargesDay/5);// ~5 fleet sessions per charger/day
+  const chargerGap=Math.max(0,chargersNeeded-(dcCount+acCount));
+
+  $('infDC').textContent=dcCount.toLocaleString();
+  $('infAC').textContent=acCount.toLocaleString();
+  $('infDCCap').textContent=Math.round(dcCapDay).toLocaleString()+' sessions/day';
+  $('infACCap').textContent=Math.round(acCapDay).toLocaleString()+' sessions/day';
+  $('infMaxEV').textContent=maxEVHealthy.toLocaleString()+' (healthy) / '+maxEVAbsolute.toLocaleString()+' (max)';
+  $('infUtil').innerHTML=fleet.toLocaleString()+' EVs → <span style="color:'+contentionColor+'">'+utilPct+'% charger utilization</span>';
+  $('infContention').innerHTML='<span style="color:'+contentionColor+'">'+contention+'</span>';
+  $('infExtraQueue').textContent=extraQueueMin>0?'+'+extraQueueMin+' min on top of base queue':'None (low utilization)';
+  $('infVerdict').innerHTML='<span style="color:'+verdictColor+'">'+verdict+'</span>';
+  $('infNeeded').textContent=chargersNeeded.toLocaleString()+' chargers (DC+AC) for '+fleet.toLocaleString()+' EVs';
+  $('infGap').textContent=chargerGap>0?chargerGap.toLocaleString()+' additional chargers needed':'Sufficient — existing infra covers fleet';
+  $('infGap').style.color=chargerGap>0?'#ef4444':'#10b981';
 
   // Insights
   let bk=null;for(let i=1;i<=yrs;i++){if(d.ev.cumA[i]<d.ice.cumA[i]){bk=i;break;}}
