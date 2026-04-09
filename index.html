@@ -487,7 +487,7 @@ const C = {
     name:'Singapore', flag:'\u{1F1F8}\u{1F1EC}', cur:'SGD', rate:1.35,
     gas:2.10, diesel:2.00, eH:0.22, eP:0.48, evSh:40, sub:11000, int:2.5, fInf:2,
     avgKm:12000, chrg:5000, chrgScore:.9, evR:30, iceR:35, hybR:32,
-    hourly:8, swapAvail:false, dcChargeMin:30, refuelMin:5, bikeChargeMin:0, bikeSwapMin:0,
+    hourly:8, swapAvail:false, dcChargeMin:30, refuelMin:5, bikeChargeMin:300, bikeSwapMin:0,
     cities:[{id:'sg',name:'Singapore',f:1,e:1,k:1,c:.95,dc:1200,ac:3800}],
     v:{
       compact:{
@@ -506,8 +506,14 @@ const C = {
         ev:{name:'Denza D9 EV (w/ COE)',price:310000,eff:4.0,m:700,i:3800,t:800},
         ice:{name:'Toyota Alphard 2.5 SC (w/ COE)',price:309000,kpl:12,m:1100,i:3500,t:1100},
         hybrid:{name:'Toyota Alphard HEV 2.5Z (w/ COE)',price:330000,kpl:17,m:950,i:3600,t:850}},
+      motorbike_commuter:{
+        ev:{name:'Yadea / Blueshark EV (w/ COE)',price:8500,eff:25,m:120,i:350,t:80},
+        ice:{name:'Honda Wave / Super Cub (w/ COE)',price:5800,kpl:50,m:250,i:280,t:120}},
+      motorbike_premium:{
+        ev:{name:'NIU NQi / Sur-Ron (w/ COE)',price:12000,eff:18,m:150,i:450,t:80},
+        ice:{name:'Honda PCX 160 / Yamaha NMAX (w/ COE)',price:9500,kpl:38,m:350,i:380,t:160}},
     },
-    policy:{sub:'EEAI: up to S$45K ARF rebate + VES S$25K',duty:'ARF+COE (EV gets 45% ARF rebate capped S$15K)',tax:'kW-based + S$700/yr EV surcharge',chrg:'5,000+; target 60K by 2030',note:'40% EV share. Denza D9 vs Toyota Alphard for GrabExec/Premium. Similar purchase price but D9 running costs far lower. No motorbikes.'}
+    policy:{sub:'EEAI: up to S$45K ARF rebate + VES S$25K',duty:'ARF+COE (EV gets 45% ARF rebate capped S$15K)',tax:'kW-based + S$700/yr EV surcharge',chrg:'5,000+; target 60K by 2030',note:'40% EV share. Denza D9 vs Alphard for GrabExec. GrabFood delivery riders mostly use ICE motorbikes — EV ~50% pricier but fuel savings significant at S$2.10/L gas.'}
   },
   philippines: {
     name:'Philippines', flag:'\u{1F1F5}\u{1F1ED}', cur:'PHP', rate:57,
