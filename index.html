@@ -241,6 +241,105 @@ footer a{color:var(--accent);text-decoration:none}
     <div class="table-section"><h3>EV Policy & Market Comparison</h3><div id="policyTable"></div></div>
   </div>
 
+  <!-- ========== MARKETPLACE ECONOMICS ========== -->
+  <h2 class="section-title" style="color:#f59e0b;border-color:#f59e0b44">Grab Marketplace Economics — ICE Cost Penalty & EV Infrastructure ROI</h2>
+
+  <div class="controls">
+    <div class="control-group">
+      <h3>Fleet in This City</h3>
+      <label>Vehicle segment</label>
+      <select id="mktSeg">
+        <option value="compact">Compact Car (GrabCar)</option>
+        <option value="mpv">MPV (Grab Premium/Exec)</option>
+        <option value="motorbike_commuter">Motorbike — Commuter (GrabBike/Delivery)</option>
+        <option value="motorbike_premium">Motorbike — Premium (GrabBike)</option>
+      </select>
+      <div class="control-row" style="margin-top:.5rem"><label>Active vehicles in city</label><span class="value" id="mktFleetVal">5,000</span></div>
+      <input type="range" id="mktFleet" min="100" max="100000" step="100" value="5000">
+      <div class="control-row"><label>Avg trips per vehicle/day</label><span class="value" id="mktTripsVal">12</span></div>
+      <input type="range" id="mktTrips" min="3" max="30" step="1" value="12">
+      <div class="control-row"><label>Avg trip distance (km)</label><span class="value" id="mktDistVal">8</span></div>
+      <input type="range" id="mktDist" min="2" max="25" step="0.5" value="8">
+    </div>
+    <div class="control-group">
+      <h3>Infrastructure Costs</h3>
+      <div class="control-row"><label>DC fast charger cost (USD)</label><span class="value" id="mktDCCostVal">$40,000</span></div>
+      <input type="range" id="mktDCCost" min="15000" max="120000" step="1000" value="40000">
+      <div class="control-row"><label>AC charger cost (USD)</label><span class="value" id="mktACCostVal">$5,000</span></div>
+      <input type="range" id="mktACCost" min="1500" max="15000" step="500" value="5000">
+      <div class="control-row"><label>DC:AC charger mix ratio</label><span class="value" id="mktMixVal">30% DC</span></div>
+      <input type="range" id="mktMix" min="10" max="80" step="5" value="30">
+      <div class="control-row"><label>EV price premium over ICE (USD)</label><span class="value" id="mktPremVal">—</span></div>
+      <input type="range" id="mktPrem" min="0" max="15000" step="250" value="3000">
+      <div class="control-row"><label>Operating days per year</label><span class="value" id="mktDaysVal">300</span></div>
+      <input type="range" id="mktDays" min="200" max="365" step="5" value="300">
+    </div>
+  </div>
+
+  <!-- Per-trip penalty -->
+  <div class="downtime-box" style="border-color:#f59e0b66">
+    <h4 style="color:#f59e0b">Per-Trip ICE Cost Penalty</h4>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
+      <div>
+        <div class="row"><span class="lbl">ICE fuel cost per km</span><span class="val ice-color" id="mktIceKm">—</span></div>
+        <div class="row"><span class="lbl">EV energy cost per km</span><span class="val ev-color" id="mktEvKm">—</span></div>
+        <div class="row"><span class="lbl">Energy saving per km</span><span class="val ev-color" id="mktSaveKm">—</span></div>
+      </div>
+      <div>
+        <div class="row"><span class="lbl">ICE maintenance per km</span><span class="val ice-color" id="mktIceMntKm">—</span></div>
+        <div class="row"><span class="lbl">EV maintenance per km</span><span class="val ev-color" id="mktEvMntKm">—</span></div>
+        <div class="row"><span class="lbl">Maintenance saving per km</span><span class="val ev-color" id="mktSaveMntKm">—</span></div>
+      </div>
+    </div>
+    <div style="margin-top:.5rem;padding-top:.4rem;border-top:1px solid var(--border)">
+      <div class="row"><span class="lbl">EV charging downtime cost per trip</span><span class="val ice-color" id="mktDtTrip">—</span></div>
+      <div class="row"><span class="lbl" style="font-weight:700;font-size:.9rem">Net ICE penalty per trip (energy + maint - downtime)</span><span class="val" style="font-size:1.2rem;font-weight:700" id="mktPenTrip">—</span></div>
+    </div>
+  </div>
+
+  <!-- Fleet-wide annual cost -->
+  <div class="insights" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+    <div class="insight-card" style="border-color:#f59e0b44">
+      <div class="label">Annual Trips (this city)</div>
+      <div class="big" id="mktAnnTrips" style="color:#38bdf8">—</div>
+      <div class="sub" id="mktAnnTripsSub">—</div>
+    </div>
+    <div class="insight-card" style="border-color:#ef444444">
+      <div class="label">Annual ICE Penalty (this city)</div>
+      <div class="big ice-color" id="mktAnnPen">—</div>
+      <div class="sub">Extra cost vs all-EV fleet</div>
+    </div>
+    <div class="insight-card" style="border-color:#10b98144">
+      <div class="label">Infra Investment Needed</div>
+      <div class="big" style="color:#38bdf8" id="mktInfraInv">—</div>
+      <div class="sub" id="mktInfraSub">—</div>
+    </div>
+    <div class="insight-card" style="border-color:#10b98144">
+      <div class="label">Fleet EV Premium</div>
+      <div class="big" style="color:#a78bfa" id="mktFleetPrem">—</div>
+      <div class="sub">Extra upfront cost for EV fleet</div>
+    </div>
+    <div class="insight-card" style="border-color:#10b98144">
+      <div class="label">Total Investment</div>
+      <div class="big" style="color:#f59e0b" id="mktTotalInv">—</div>
+      <div class="sub">Infra + fleet EV premium</div>
+    </div>
+    <div class="insight-card" style="border-color:#10b98166">
+      <div class="label">Breakeven</div>
+      <div class="big ev-color" id="mktBreakeven">—</div>
+      <div class="sub" id="mktBreakevenSub">—</div>
+    </div>
+  </div>
+
+  <div class="chart-grid">
+    <div class="chart-box full"><h3>Cumulative: ICE Penalty vs EV Infrastructure Investment (USD)</h3><canvas id="mktRoiChart" height="80"></canvas></div>
+  </div>
+
+  <div class="table-section">
+    <h3>Year-by-Year Marketplace Economics</h3>
+    <div id="mktTable"></div>
+  </div>
+
   <h2 class="section-title">Key Factors</h2>
   <div class="factors" id="factorsContainer"></div>
 </div>
@@ -866,6 +965,7 @@ function render(){
   ch.sens.data={labels:imp.map(i=>i.l),datasets:[{label:'Impact',data:imp.map(i=>i.v),backgroundColor:imp.map(i=>i.v>0?'#10b981':'#ef4444')}]};
   ch.sens.update();
   renderFactors();
+  renderMkt();
 }
 
 // ========== COMPARE ==========
@@ -921,8 +1021,162 @@ function renderFactors(){
   $('factorsContainer').innerHTML=factors.map(f=>`<div class="factor-card"><h4>${f.t}</h4><p>${f.d}</p><div class="sensitivity-bar"><div class="sensitivity-fill" style="width:${f.s*100}%;background:${f.c}"></div></div><div style="font-size:.65rem;color:var(--muted);margin-top:.15rem">Impact: ${f.s>.7?'Very High':f.s>.5?'High':'Moderate'}</div></div>`).join('');
 }
 
+// ========== MARKETPLACE ECONOMICS ==========
+const mktSliders=[
+  {id:'mktFleet',d:'mktFleetVal',f:v=>Number(v).toLocaleString()},
+  {id:'mktTrips',d:'mktTripsVal',f:v=>v},
+  {id:'mktDist',d:'mktDistVal',f:v=>v+' km'},
+  {id:'mktDCCost',d:'mktDCCostVal',f:v=>'$'+Number(v).toLocaleString()},
+  {id:'mktACCost',d:'mktACCostVal',f:v=>'$'+Number(v).toLocaleString()},
+  {id:'mktMix',d:'mktMixVal',f:v=>v+'% DC'},
+  {id:'mktPrem',d:'mktPremVal',f:v=>'$'+Number(v).toLocaleString()},
+  {id:'mktDays',d:'mktDaysVal',f:v=>v},
+];
+
+let mktChart;
+function initMktChart(){
+  mktChart=new Chart($('mktRoiChart'),{type:'line',data:{labels:[],datasets:[]},options:{responsive:true,interaction:{intersect:false,mode:'index'},plugins:{tooltip:{callbacks:{label:c=>c.dataset.label+': $'+(c.raw/1e6).toFixed(1)+'M'}}},scales:{y:{ticks:{callback:v=>'$'+(v/1e6).toFixed(1)+'M'}}}}});
+}
+
+function renderMkt(){
+  const cc=C[curC],city=cc.cities.find(c=>c.id===$('city').value)||cc.cities[0];
+  const seg=$('mktSeg').value;
+  const vData=cc.v[seg];
+  if(!vData)return;
+  const isBike=seg.startsWith('motorbike');
+  const fleet=+$('mktFleet').value,tripsDay=+$('mktTrips').value,tripDist=+$('mktDist').value;
+  const dcCost=+$('mktDCCost').value,acCost=+$('mktACCost').value;
+  const dcMix=+$('mktMix').value/100,days=+$('mktDays').value;
+  const evPrem=+$('mktPrem').value;
+
+  const ev=vData.ev,ice=vData.ice;
+  // Auto-set EV premium from actual data
+  const autoP=Math.max(0,ev.price-ice.price);
+  if(Math.abs(evPrem-autoP)>2000){$('mktPrem').value=autoP;$('mktPremVal').textContent='$'+autoP.toLocaleString();}
+  const evPremFinal=+$('mktPrem').value;
+  const annualKm=tripsDay*tripDist*days;
+
+  // Per-km costs
+  const elecBlend=cc.eH*.7+cc.eP*.3;
+  const evFuelKm=elecBlend/ev.eff;
+  const iceFuelKm=cc.gas/ice.kpl;
+  const evMntKm=ev.m/annualKm*days;// normalize to per-km
+  const iceMntKm=ice.m/annualKm*days;
+  const saveFuelKm=iceFuelKm-evFuelKm;
+  const saveMntKm=iceMntKm-evMntKm;
+
+  // Charging downtime cost per trip
+  const spec=CHARGE_SPECS[seg]||CHARGE_SPECS.compact;
+  const dailyKm=tripsDay*tripDist;
+  const midShiftPerDay=Math.max(0,dailyKm/spec.range-1);
+  const dcAcc=city.c*.6;const qW=(1-city.c)*30+5;
+  const chgTimePerSession=isBike?(cc.swapAvail?5:spec.acHrs*60*.7):(dcAcc*(spec.dcMin+qW)+(1-dcAcc)*(spec.acHrs*60*.5+qW));
+  const dtMinPerDay=midShiftPerDay*chgTimePerSession;
+  const dtCostPerDay=(dtMinPerDay/60)*cc.hourly;
+  const dtCostPerTrip=dtCostPerDay/tripsDay;
+
+  // Net per-trip ICE penalty
+  const penPerTripFuel=saveFuelKm*tripDist;
+  const penPerTripMnt=saveMntKm*tripDist;
+  const netPenPerTrip=penPerTripFuel+penPerTripMnt-dtCostPerTrip;
+
+  // Annual fleet-wide
+  const annualTrips=fleet*tripsDay*days;
+  const annualPenalty=annualTrips*netPenPerTrip;
+
+  // Infrastructure investment
+  // EVs per charger: fleet vehicles charge ~1x midshift/day, each DC charger handles ~7 sessions, AC ~2.5
+  const midShiftTotal=fleet*Math.max(0.3,midShiftPerDay);
+  const dcChargersNeeded=Math.ceil(midShiftTotal*dcMix/7);
+  const acChargersNeeded=Math.ceil(midShiftTotal*(1-dcMix)/2.5);
+  const infraInvestment=dcChargersNeeded*dcCost+acChargersNeeded*acCost;
+
+  // Fleet EV premium
+  const fleetPremium=fleet*evPremFinal;
+  const totalInvestment=infraInvestment+fleetPremium;
+
+  // Breakeven
+  const fuelInflYr=cc.fInf/100;
+  let cumSavings=0,cumInvest=totalInvestment,breakevenYr=null;
+  const roiLabels=['Year 0'],cumSavArr=[0],cumInvArr=[totalInvestment];
+  for(let yr=1;yr<=10;yr++){
+    const fuelMult=Math.pow(1+fuelInflYr,yr-1);
+    const yrSavings=fleet*annualKm*(saveFuelKm*fuelMult+saveMntKm)-fleet*dtCostPerDay*days;
+    cumSavings+=yrSavings;
+    roiLabels.push('Year '+yr);
+    cumSavArr.push(cumSavings);
+    cumInvArr.push(totalInvestment);// one-time investment (flat line)
+    if(!breakevenYr&&cumSavings>=totalInvestment)breakevenYr=yr;
+  }
+
+  // Render per-trip
+  $('mktIceKm').textContent='$'+iceFuelKm.toFixed(3)+'/km';
+  $('mktEvKm').textContent='$'+evFuelKm.toFixed(3)+'/km';
+  $('mktSaveKm').textContent='$'+saveFuelKm.toFixed(3)+'/km';
+  $('mktIceMntKm').textContent='$'+(ice.m/annualKm).toFixed(4)+'/km';
+  $('mktEvMntKm').textContent='$'+(ev.m/annualKm).toFixed(4)+'/km';
+  $('mktSaveMntKm').textContent='$'+((ice.m-ev.m)/annualKm).toFixed(4)+'/km';
+  $('mktDtTrip').textContent=dtCostPerTrip>0.001?'-$'+dtCostPerTrip.toFixed(3)+' (EV downtime)':'~$0 (overnight charging)';
+  $('mktPenTrip').textContent='$'+netPenPerTrip.toFixed(2);
+  $('mktPenTrip').style.color=netPenPerTrip>0?'#10b981':'#ef4444';
+
+  // Render fleet-wide
+  $('mktAnnTrips').textContent=(annualTrips/1e6).toFixed(1)+'M';
+  $('mktAnnTripsSub').textContent=fleet.toLocaleString()+' vehicles × '+tripsDay+' trips × '+days+' days';
+  $('mktAnnPen').textContent='$'+(Math.abs(annualPenalty)/1e6).toFixed(2)+'M/yr';
+  $('mktAnnPen').className='big '+(annualPenalty>0?'ice-color':'ev-color');
+  $('mktInfraInv').textContent='$'+(infraInvestment/1e6).toFixed(1)+'M';
+  $('mktInfraSub').textContent=dcChargersNeeded.toLocaleString()+' DC + '+acChargersNeeded.toLocaleString()+' AC chargers';
+  $('mktFleetPrem').textContent='$'+(fleetPremium/1e6).toFixed(1)+'M';
+  $('mktTotalInv').textContent='$'+(totalInvestment/1e6).toFixed(1)+'M';
+  $('mktBreakeven').textContent=breakevenYr?'Year '+breakevenYr:'>10 years';
+  $('mktBreakeven').className='big '+(breakevenYr&&breakevenYr<=5?'ev-color':breakevenYr?'hybrid-color':'ice-color');
+  $('mktBreakevenSub').textContent=breakevenYr?'Investment pays for itself in '+breakevenYr+' year'+(breakevenYr>1?'s':''):'Savings don\'t cover investment in 10yr';
+
+  // Chart
+  mktChart.data={labels:roiLabels,datasets:[
+    {label:'Cumulative Fleet Savings (vs ICE)',data:cumSavArr,borderColor:'#10b981',backgroundColor:'#10b98118',fill:true,tension:.3,pointRadius:3,borderWidth:2},
+    {label:'Total Investment (infra + fleet premium)',data:cumInvArr,borderColor:'#ef4444',backgroundColor:'#ef444418',fill:false,tension:0,pointRadius:0,borderWidth:2,borderDash:[6,4]},
+  ]};
+  mktChart.update();
+
+  // Table
+  let h='<table><thead><tr><th>Year</th><th>Annual Fleet Savings</th><th>Cumulative Savings</th><th>Total Investment</th><th>Net ROI</th><th>Status</th></tr></thead><tbody>';
+  let cs2=0;
+  for(let yr=0;yr<=10;yr++){
+    if(yr===0){
+      h+='<tr><td>Year 0 (invest)</td><td>—</td><td>$0</td><td>'+fmt$(totalInvestment)+'</td><td style="color:#ef4444">-'+fmt$(totalInvestment)+'</td><td style="color:#ef4444">Invested</td></tr>';
+    }else{
+      const fm=Math.pow(1+fuelInflYr,yr-1);
+      const ys=fleet*annualKm*(saveFuelKm*fm+saveMntKm)-fleet*dtCostPerDay*days;
+      cs2+=ys;
+      const roi=cs2-totalInvestment;
+      const positive=roi>=0;
+      h+=`<tr${positive?' class="winner"':''}><td>Year ${yr}</td><td>${fmt$(ys)}</td><td>${fmt$(cs2)}</td><td>${fmt$(totalInvestment)}</td><td style="color:${positive?'#10b981':'#ef4444'}">${positive?'+':''}${fmt$(roi)}</td><td style="color:${positive?'#10b981':'#ef4444'};font-weight:600">${positive?'PROFITABLE':'Recovering'}</td></tr>`;
+    }
+  }
+  h+='</tbody></table>';
+  $('mktTable').innerHTML=h;
+}
+
+function wireMkt(){
+  mktSliders.forEach(s=>{$(s.id).addEventListener('input',()=>{$(s.d).textContent=s.f($(s.id).value);renderMkt();});});
+  $('mktSeg').addEventListener('change',()=>{
+    const s=$('mktSeg').value,isBike=s.startsWith('motorbike');
+    if(isBike){$('mktTrips').value=18;$('mktDist').value=5;$('mktPrem').value=500;$('mktDCCost').value=15000;$('mktACCost').value=2000;}
+    else if(s==='mpv'){$('mktTrips').value=10;$('mktDist').value=12;$('mktPrem').value=5000;}
+    else{$('mktTrips').value=12;$('mktDist').value=8;$('mktPrem').value=3000;$('mktDCCost').value=40000;$('mktACCost').value=5000;}
+    mktSliders.forEach(sl=>{$(sl.d).textContent=sl.f($(sl.id).value);});
+    renderMkt();
+  });
+  // Also re-render when country or city changes
+  const origSelC=selC;
+  // Hook into render to also update mkt
+  const origRender=render;
+}
+
 // ========== INIT ==========
-buildBar();initCh();wireSliders();selC('thailand');
+buildBar();initCh();initMktChart();wireSliders();wireMkt();selC('thailand');renderMkt();
 </script>
 </body>
 </html>
