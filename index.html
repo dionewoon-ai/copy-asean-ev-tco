@@ -242,7 +242,7 @@ footer a{color:var(--accent);text-decoration:none}
   </div>
 
   <!-- ========== MARKETPLACE ECONOMICS ========== -->
-  <h2 class="section-title" style="color:#f59e0b;border-color:#f59e0b44">Grab Marketplace Economics — ICE Cost Penalty & EV Infrastructure ROI</h2>
+  <h2 class="section-title" style="color:#f59e0b;border-color:#f59e0b44">Grab Marketplace Economics — <span id="mktCountryLabel"></span></h2>
 
   <div class="controls">
     <div class="control-group">
@@ -276,68 +276,87 @@ footer a{color:var(--accent);text-decoration:none}
     </div>
   </div>
 
-  <!-- Per-trip penalty -->
+  <!-- Per-trip penalty with transparent math -->
   <div class="downtime-box" style="border-color:#f59e0b66">
-    <h4 style="color:#f59e0b">Per-Trip ICE Cost Penalty</h4>
+    <h4 style="color:#f59e0b">Per-Trip ICE Cost Penalty — Showing the Math</h4>
+    <p style="font-size:.7rem;color:var(--muted);margin-bottom:.5rem">Fleet/ride-hail drivers use ~80% public DC charging (not home rates). All figures in USD for cross-country comparability.</p>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
       <div>
-        <div class="row"><span class="lbl">ICE fuel cost per km</span><span class="val ice-color" id="mktIceKm">—</span></div>
-        <div class="row"><span class="lbl">EV energy cost per km</span><span class="val ev-color" id="mktEvKm">—</span></div>
-        <div class="row"><span class="lbl">Energy saving per km</span><span class="val ev-color" id="mktSaveKm">—</span></div>
+        <div class="row"><span class="lbl">ICE fuel cost</span><span class="val ice-color" id="mktIceKm">—</span></div>
+        <div style="padding:0 0 .3rem;font-size:.62rem;color:#64748b" id="mktIceMath"></div>
+        <div class="row"><span class="lbl">EV energy cost</span><span class="val ev-color" id="mktEvKm">—</span></div>
+        <div style="padding:0 0 .3rem;font-size:.62rem;color:#64748b" id="mktEvMath"></div>
+        <div class="row"><span class="lbl" style="font-weight:600">Energy saving/km</span><span class="val ev-color" id="mktSaveKm">—</span></div>
       </div>
       <div>
-        <div class="row"><span class="lbl">ICE maintenance per km</span><span class="val ice-color" id="mktIceMntKm">—</span></div>
-        <div class="row"><span class="lbl">EV maintenance per km</span><span class="val ev-color" id="mktEvMntKm">—</span></div>
-        <div class="row"><span class="lbl">Maintenance saving per km</span><span class="val ev-color" id="mktSaveMntKm">—</span></div>
+        <div class="row"><span class="lbl">ICE maintenance/km</span><span class="val ice-color" id="mktIceMntKm">—</span></div>
+        <div style="padding:0 0 .3rem;font-size:.62rem;color:#64748b" id="mktIceMntMath"></div>
+        <div class="row"><span class="lbl">EV maintenance/km</span><span class="val ev-color" id="mktEvMntKm">—</span></div>
+        <div style="padding:0 0 .3rem;font-size:.62rem;color:#64748b" id="mktEvMntMath"></div>
+        <div class="row"><span class="lbl" style="font-weight:600">Maintenance saving/km</span><span class="val ev-color" id="mktSaveMntKm">—</span></div>
       </div>
     </div>
     <div style="margin-top:.5rem;padding-top:.4rem;border-top:1px solid var(--border)">
-      <div class="row"><span class="lbl">EV charging downtime cost per trip</span><span class="val ice-color" id="mktDtTrip">—</span></div>
-      <div class="row"><span class="lbl" style="font-weight:700;font-size:.9rem">Net ICE penalty per trip (energy + maint - downtime)</span><span class="val" style="font-size:1.2rem;font-weight:700" id="mktPenTrip">—</span></div>
+      <div class="row"><span class="lbl">EV charging downtime cost/trip</span><span class="val ice-color" id="mktDtTrip">—</span></div>
+      <div style="padding:0 0 .3rem;font-size:.62rem;color:#64748b" id="mktDtMath"></div>
+      <div class="row"><span class="lbl" style="font-weight:700;font-size:.9rem">Net ICE penalty per trip</span><span class="val" style="font-size:1.2rem;font-weight:700" id="mktPenTrip">—</span></div>
+      <div style="padding:0;font-size:.62rem;color:#64748b" id="mktPenMath"></div>
     </div>
   </div>
 
   <!-- Fleet-wide annual cost -->
-  <div class="insights" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+  <div class="insights" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
     <div class="insight-card" style="border-color:#f59e0b44">
       <div class="label">Annual Trips (this city)</div>
       <div class="big" id="mktAnnTrips" style="color:#38bdf8">—</div>
       <div class="sub" id="mktAnnTripsSub">—</div>
     </div>
     <div class="insight-card" style="border-color:#ef444444">
-      <div class="label">Annual ICE Penalty (this city)</div>
+      <div class="label">Annual ICE Penalty (theoretical max)</div>
       <div class="big ice-color" id="mktAnnPen">—</div>
-      <div class="sub">Extra cost vs all-EV fleet</div>
+      <div class="sub" id="mktAnnPenSub">if 100% fleet converted instantly</div>
     </div>
-    <div class="insight-card" style="border-color:#10b98144">
-      <div class="label">Infra Investment Needed</div>
+    <div class="insight-card" style="border-color:#38bdf844">
+      <div class="label">Infra Investment</div>
       <div class="big" style="color:#38bdf8" id="mktInfraInv">—</div>
       <div class="sub" id="mktInfraSub">—</div>
     </div>
-    <div class="insight-card" style="border-color:#10b98144">
+    <div class="insight-card" style="border-color:#a78bfa44">
       <div class="label">Fleet EV Premium</div>
       <div class="big" style="color:#a78bfa" id="mktFleetPrem">—</div>
-      <div class="sub">Extra upfront cost for EV fleet</div>
+      <div class="sub">Extra upfront for EV fleet</div>
     </div>
-    <div class="insight-card" style="border-color:#10b98144">
+    <div class="insight-card" style="border-color:#fb923c44">
+      <div class="label">Hidden Costs (5yr est.)</div>
+      <div class="big" style="color:#fb923c" id="mktFriction">—</div>
+      <div class="sub" id="mktFrictionSub" style="font-size:.62rem">Grid, training, charger maint, fleet mgmt</div>
+    </div>
+    <div class="insight-card" style="border-color:#f59e0b44">
       <div class="label">Total Investment</div>
       <div class="big" style="color:#f59e0b" id="mktTotalInv">—</div>
-      <div class="sub">Infra + fleet EV premium</div>
+      <div class="sub">Infra + premium + friction (one-time)</div>
     </div>
     <div class="insight-card" style="border-color:#10b98166">
-      <div class="label">Breakeven</div>
+      <div class="label">Breakeven (phased deploy)</div>
       <div class="big ev-color" id="mktBreakeven">—</div>
       <div class="sub" id="mktBreakevenSub">—</div>
     </div>
   </div>
 
   <div class="chart-grid">
-    <div class="chart-box full"><h3>Cumulative: ICE Penalty vs EV Infrastructure Investment (USD)</h3><canvas id="mktRoiChart" height="80"></canvas></div>
+    <div class="chart-box full"><h3>Cumulative Savings vs Investment — Phased Fleet Deployment (USD)</h3><canvas id="mktRoiChart" height="80"></canvas></div>
   </div>
 
   <div class="table-section">
     <h3>Year-by-Year Marketplace Economics</h3>
     <div id="mktTable"></div>
+  </div>
+
+  <!-- Barriers: Why hasn't this happened? -->
+  <div class="downtime-box" style="border-color:#ef444466;margin-top:1rem">
+    <h4 style="color:#ef4444">Why Hasn't This Happened Yet? — Real-World Barriers to Fleet EV Transition</h4>
+    <p style="font-size:.75rem;color:var(--muted);margin-bottom:.6rem">The per-trip math may look favorable on paper, but these barriers explain why large-scale fleet EV conversion has been slow across ASEAN and Taiwan. Each barrier adds cost, time, or risk not captured in simple TCO math:</p>
+    <div class="factors" id="mktBarriers" style="margin-bottom:0"></div>
   </div>
 
   <h2 class="section-title">Key Factors</h2>
@@ -1092,22 +1111,31 @@ function renderMkt(){
   const evPrem=+$('mktPrem').value;
 
   const ev=vData.ev,ice=vData.ice;
-  // Auto-set EV premium from actual data
   const autoP=Math.max(0,ev.price-ice.price);
   if(Math.abs(evPrem-autoP)>2000){$('mktPrem').value=autoP;$('mktPremVal').textContent='$'+autoP.toLocaleString();}
   const evPremFinal=+$('mktPrem').value;
   const annualKm=tripsDay*tripDist*days;
 
-  // Per-km costs
-  const elecBlend=cc.eH*.7+cc.eP*.3;
+  // Show country & city in header
+  $('mktCountryLabel').textContent=cc.flag+' '+cc.name+' — '+city.name;
+
+  // ===== ENERGY COST =====
+  // Fleet drivers use ~20% depot/home charging, 80% public DC
+  // (Not 70% home — fleet drivers don't charge at home like personal owners)
+  const fleetHome=0.2;
+  const elecBlend=cc.eH*fleetHome+cc.eP*(1-fleetHome);
   const evFuelKm=elecBlend/ev.eff;
   const iceFuelKm=cc.gas/ice.kpl;
-  const evMntKm=ev.m/annualKm*days;// normalize to per-km
-  const iceMntKm=ice.m/annualKm*days;
+
+  // ===== MAINTENANCE PER KM =====
+  // Annual maintenance cost / annual km = per-km cost
+  // (FIXED: was previously multiplied by days, inflating by ~300x)
+  const evMntKm=ev.m/annualKm;
+  const iceMntKm=ice.m/annualKm;
   const saveFuelKm=iceFuelKm-evFuelKm;
   const saveMntKm=iceMntKm-evMntKm;
 
-  // Charging downtime cost per trip
+  // ===== CHARGING DOWNTIME =====
   const spec=CHARGE_SPECS[seg]||CHARGE_SPECS.compact;
   const dailyKm=tripsDay*tripDist;
   const midShiftPerDay=Math.max(0,dailyKm/spec.range-1);
@@ -1117,88 +1145,155 @@ function renderMkt(){
   const dtCostPerDay=(dtMinPerDay/60)*cc.hourly;
   const dtCostPerTrip=dtCostPerDay/tripsDay;
 
-  // Net per-trip ICE penalty
+  // ===== NET PER-TRIP ICE PENALTY =====
   const penPerTripFuel=saveFuelKm*tripDist;
   const penPerTripMnt=saveMntKm*tripDist;
   const netPenPerTrip=penPerTripFuel+penPerTripMnt-dtCostPerTrip;
 
-  // Annual fleet-wide
+  // ===== ANNUAL FLEET-WIDE (theoretical max — 100% fleet) =====
   const annualTrips=fleet*tripsDay*days;
   const annualPenalty=annualTrips*netPenPerTrip;
 
-  // Infrastructure investment
-  // EVs per charger: fleet vehicles charge ~1x midshift/day, each DC charger handles ~7 sessions, AC ~2.5
+  // ===== INFRASTRUCTURE =====
   const midShiftTotal=fleet*Math.max(0.3,midShiftPerDay);
   const dcChargersNeeded=Math.ceil(midShiftTotal*dcMix/7);
   const acChargersNeeded=Math.ceil(midShiftTotal*(1-dcMix)/2.5);
   const infraInvestment=dcChargersNeeded*dcCost+acChargersNeeded*acCost;
 
-  // Fleet EV premium
-  const fleetPremium=fleet*evPremFinal;
-  const totalInvestment=infraInvestment+fleetPremium;
+  // ===== FRICTION / HIDDEN COSTS =====
+  // These are real costs often omitted from simple TCO comparisons
+  const gridPerDC=isBike?2000:10000; // Grid connection fee per DC charger
+  const gridCost=dcChargersNeeded*gridPerDC;
+  const driverTraining=fleet*30; // ~$30/driver one-time EV training & onboarding
+  const chargerMaintYr=(dcChargersNeeded*dcCost*0.06)+(acChargersNeeded*acCost*0.04); // 6% DC, 4% AC annual maint
+  const fleetMgmtYr=fleet*(isBike?15:50); // EV fleet mgmt overhead $/vehicle/yr
+  const driverFinGap=fleet*evPremFinal*0.02; // 2% higher financing cost for EV loans
+  const oneTimeFriction=gridCost+driverTraining;
+  const annualFriction=chargerMaintYr+fleetMgmtYr+driverFinGap;
 
-  // Breakeven
+  // ===== TOTAL INVESTMENT =====
+  const fleetPremium=fleet*evPremFinal;
+  const totalInvestment=infraInvestment+fleetPremium+oneTimeFriction;
+
+  // ===== PHASED DEPLOYMENT ROI =====
+  // Realistic: can't convert 100% fleet on day 1
+  // Year: 0  1    2    3    4    5    6+
+  // Ramp: 0  15%  35%  55%  75%  90%  100%
+  const ramp=[0,0.15,0.35,0.55,0.75,0.90,1.0,1.0,1.0,1.0,1.0];
   const fuelInflYr=cc.fInf/100;
-  let cumSavings=0,cumInvest=totalInvestment,breakevenYr=null;
-  const roiLabels=['Year 0'],cumSavArr=[0],cumInvArr=[totalInvestment];
+  let cumSav=0,cumInv=0,breakevenYr=null;
+  const roiLabels=['Year 0'],cumSavArr=[0],cumInvArr=[0];
+
+  // Year 0: invest for first tranche (15% of fleet)
+  cumInv=totalInvestment*ramp[1];
+  cumInvArr[0]=cumInv;
+
+  const yearData=[];
   for(let yr=1;yr<=10;yr++){
-    const fuelMult=Math.pow(1+fuelInflYr,yr-1);
-    const yrSavings=fleet*annualKm*(saveFuelKm*fuelMult+saveMntKm)-fleet*dtCostPerDay*days;
-    cumSavings+=yrSavings;
+    const r=ramp[yr]||1,pr=ramp[yr-1]||0;
+    // Incremental investment for new tranche
+    if(r>pr) cumInv+=totalInvestment*(r-pr);
+    const fm=Math.pow(1+fuelInflYr,yr-1);
+    const activeVeh=fleet*r;
+    // Per-vehicle annual savings
+    const vehFuelSave=tripsDay*tripDist*days*saveFuelKm*fm;
+    const vehMntSave=ice.m-ev.m; // Annual maintenance difference (direct)
+    const vehDtCost=dtCostPerDay*days;
+    const vehNet=vehFuelSave+vehMntSave-vehDtCost;
+    // Fleet-wide
+    const yrGross=activeVeh*vehNet;
+    const yrFric=annualFriction*r;
+    const yrNet=yrGross-yrFric;
+    cumSav+=yrNet;
     roiLabels.push('Year '+yr);
-    cumSavArr.push(cumSavings);
-    cumInvArr.push(totalInvestment);// one-time investment (flat line)
-    if(!breakevenYr&&cumSavings>=totalInvestment)breakevenYr=yr;
+    cumSavArr.push(cumSav);
+    cumInvArr.push(cumInv);
+    yearData.push({yr,r,activeVeh:Math.round(activeVeh),vehNet,yrGross,yrFric,yrNet,cumSav,cumInv});
+    if(!breakevenYr&&cumSav>=cumInv) breakevenYr=yr;
   }
 
-  // Render per-trip
+  // ===== RENDER: Per-km math with transparent formulas =====
   $('mktIceKm').textContent='$'+iceFuelKm.toFixed(3)+'/km';
+  $('mktIceMath').textContent='Formula: $'+cc.gas.toFixed(2)+'/L \u00F7 '+ice.kpl+' km/L = $'+iceFuelKm.toFixed(3)+'/km';
   $('mktEvKm').textContent='$'+evFuelKm.toFixed(3)+'/km';
+  $('mktEvMath').textContent='($'+cc.eH.toFixed(3)+' \u00D7 20% home + $'+cc.eP.toFixed(3)+' \u00D7 80% public) \u00F7 '+ev.eff+' km/kWh = $'+evFuelKm.toFixed(3)+'/km';
   $('mktSaveKm').textContent='$'+saveFuelKm.toFixed(3)+'/km';
-  $('mktIceMntKm').textContent='$'+(ice.m/annualKm).toFixed(4)+'/km';
-  $('mktEvMntKm').textContent='$'+(ev.m/annualKm).toFixed(4)+'/km';
-  $('mktSaveMntKm').textContent='$'+((ice.m-ev.m)/annualKm).toFixed(4)+'/km';
-  $('mktDtTrip').textContent=dtCostPerTrip>0.001?'-$'+dtCostPerTrip.toFixed(3)+' (EV downtime)':'~$0 (overnight charging)';
-  $('mktPenTrip').textContent='$'+netPenPerTrip.toFixed(2);
-  $('mktPenTrip').style.color=netPenPerTrip>0?'#10b981':'#ef4444';
 
-  // Render fleet-wide
+  $('mktIceMntKm').textContent='$'+iceMntKm.toFixed(4)+'/km';
+  $('mktIceMntMath').textContent='$'+ice.m+'/yr ('+ice.name+') \u00F7 '+annualKm.toLocaleString()+' km/yr = $'+iceMntKm.toFixed(4)+'/km';
+  $('mktEvMntKm').textContent='$'+evMntKm.toFixed(4)+'/km';
+  $('mktEvMntMath').textContent='$'+ev.m+'/yr ('+ev.name+') \u00F7 '+annualKm.toLocaleString()+' km/yr = $'+evMntKm.toFixed(4)+'/km';
+  $('mktSaveMntKm').textContent='$'+saveMntKm.toFixed(4)+'/km';
+
+  $('mktDtTrip').textContent=dtCostPerTrip>0.001?'-$'+dtCostPerTrip.toFixed(3)+' (EV downtime)':'~$0 (overnight charging)';
+  $('mktDtMath').textContent=midShiftPerDay.toFixed(1)+' mid-shift charges/day \u00D7 '+Math.round(chgTimePerSession)+' min/session \u00F7 60 \u00D7 $'+cc.hourly.toFixed(1)+'/hr \u00F7 '+tripsDay+' trips = $'+dtCostPerTrip.toFixed(3)+'/trip';
+
+  $('mktPenTrip').textContent=(netPenPerTrip>=0?'':'−')+'$'+Math.abs(netPenPerTrip).toFixed(2);
+  $('mktPenTrip').style.color=netPenPerTrip>0?'#10b981':'#ef4444';
+  $('mktPenMath').textContent='Fuel: $'+penPerTripFuel.toFixed(3)+' + Maint: $'+penPerTripMnt.toFixed(3)+' − Downtime: $'+dtCostPerTrip.toFixed(3)+' = $'+netPenPerTrip.toFixed(2)+'/trip \u00D7 '+tripDist+'km';
+
+  // ===== RENDER: Fleet-wide =====
   $('mktAnnTrips').textContent=(annualTrips/1e6).toFixed(1)+'M';
-  $('mktAnnTripsSub').textContent=fleet.toLocaleString()+' vehicles × '+tripsDay+' trips × '+days+' days';
+  $('mktAnnTripsSub').textContent=fleet.toLocaleString()+' \u00D7 '+tripsDay+' trips \u00D7 '+days+' days';
   $('mktAnnPen').textContent='$'+(Math.abs(annualPenalty)/1e6).toFixed(2)+'M/yr';
   $('mktAnnPen').className='big '+(annualPenalty>0?'ice-color':'ev-color');
+  $('mktAnnPenSub').textContent='Theoretical max if 100% converted instantly';
   $('mktInfraInv').textContent='$'+(infraInvestment/1e6).toFixed(1)+'M';
-  $('mktInfraSub').textContent=dcChargersNeeded.toLocaleString()+' DC + '+acChargersNeeded.toLocaleString()+' AC chargers';
+  $('mktInfraSub').textContent=dcChargersNeeded.toLocaleString()+' DC ($'+Math.round(dcCost/1000)+'k) + '+acChargersNeeded.toLocaleString()+' AC ($'+Math.round(acCost/1000)+'k)';
   $('mktFleetPrem').textContent='$'+(fleetPremium/1e6).toFixed(1)+'M';
+  const fric5yr=oneTimeFriction+annualFriction*5;
+  $('mktFriction').textContent='$'+(fric5yr/1e6).toFixed(1)+'M';
+  $('mktFrictionSub').textContent='Grid: '+fmt$(gridCost)+' | Training: '+fmt$(driverTraining)+' | Annual ops: '+fmt$(annualFriction)+'/yr \u00D7 5yr';
   $('mktTotalInv').textContent='$'+(totalInvestment/1e6).toFixed(1)+'M';
   $('mktBreakeven').textContent=breakevenYr?'Year '+breakevenYr:'>10 years';
   $('mktBreakeven').className='big '+(breakevenYr&&breakevenYr<=5?'ev-color':breakevenYr?'hybrid-color':'ice-color');
-  $('mktBreakevenSub').textContent=breakevenYr?'Investment pays for itself in '+breakevenYr+' year'+(breakevenYr>1?'s':''):'Savings don\'t cover investment in 10yr';
+  $('mktBreakevenSub').textContent=breakevenYr?'Phased ramp: 15%\u219235%\u219255%\u219275%\u219290%\u2192100% over 5yr':'Savings don\'t cover investment in 10yr window';
 
-  // Chart
+  // ===== RENDER: Barriers =====
+  renderBarriers(cc,city,fleet,evPremFinal,isBike,seg,vData);
+
+  // ===== Chart =====
   mktChart.data={labels:roiLabels,datasets:[
-    {label:'Cumulative Fleet Savings (vs ICE)',data:cumSavArr,borderColor:'#10b981',backgroundColor:'#10b98118',fill:true,tension:.3,pointRadius:3,borderWidth:2},
-    {label:'Total Investment (infra + fleet premium)',data:cumInvArr,borderColor:'#ef4444',backgroundColor:'#ef444418',fill:false,tension:0,pointRadius:0,borderWidth:2,borderDash:[6,4]},
+    {label:'Cumulative Net Savings (phased)',data:cumSavArr,borderColor:'#10b981',backgroundColor:'#10b98118',fill:true,tension:.3,pointRadius:3,borderWidth:2},
+    {label:'Cumulative Investment (phased)',data:cumInvArr,borderColor:'#ef4444',backgroundColor:'#ef444418',fill:false,tension:.3,pointRadius:3,borderWidth:2,borderDash:[6,4]},
   ]};
   mktChart.update();
 
-  // Table
-  let h='<table><thead><tr><th>Year</th><th>Annual Fleet Savings</th><th>Cumulative Savings</th><th>Total Investment</th><th>Net ROI</th><th>Status</th></tr></thead><tbody>';
-  let cs2=0;
-  for(let yr=0;yr<=10;yr++){
-    if(yr===0){
-      h+='<tr><td>Year 0 (invest)</td><td>—</td><td>$0</td><td>'+fmt$(totalInvestment)+'</td><td style="color:#ef4444">-'+fmt$(totalInvestment)+'</td><td style="color:#ef4444">Invested</td></tr>';
-    }else{
-      const fm=Math.pow(1+fuelInflYr,yr-1);
-      const ys=fleet*annualKm*(saveFuelKm*fm+saveMntKm)-fleet*dtCostPerDay*days;
-      cs2+=ys;
-      const roi=cs2-totalInvestment;
-      const positive=roi>=0;
-      h+=`<tr${positive?' class="winner"':''}><td>Year ${yr}</td><td>${fmt$(ys)}</td><td>${fmt$(cs2)}</td><td>${fmt$(totalInvestment)}</td><td style="color:${positive?'#10b981':'#ef4444'}">${positive?'+':''}${fmt$(roi)}</td><td style="color:${positive?'#10b981':'#ef4444'};font-weight:600">${positive?'PROFITABLE':'Recovering'}</td></tr>`;
-    }
+  // ===== Table =====
+  let h='<table><thead><tr><th>Year</th><th>Fleet %</th><th>Active EVs</th><th>Gross Savings</th><th>Friction</th><th>Net Savings</th><th>Cum. Savings</th><th>Cum. Investment</th><th>Net ROI</th><th>Status</th></tr></thead><tbody>';
+  h+='<tr><td>Year 0</td><td>0%</td><td>0</td><td>\u2014</td><td>\u2014</td><td>\u2014</td><td>$0</td><td>'+fmt$(cumInvArr[0])+'</td><td style="color:#ef4444">\u2212'+fmt$(cumInvArr[0])+'</td><td style="color:#ef4444">Investing</td></tr>';
+  for(const yd of yearData){
+    const roi=yd.cumSav-yd.cumInv;
+    const pos=roi>=0;
+    h+=`<tr${pos?' class="winner"':''}><td>Year ${yd.yr}</td><td>${Math.round(yd.r*100)}%</td><td>${yd.activeVeh.toLocaleString()}</td><td>${fmt$(yd.yrGross)}</td><td style="color:#fb923c">\u2212${fmt$(yd.yrFric)}</td><td>${fmt$(yd.yrNet)}</td><td>${fmt$(yd.cumSav)}</td><td>${fmt$(yd.cumInv)}</td><td style="color:${pos?'#10b981':'#ef4444'}">${pos?'+':'\u2212'}${fmt$(Math.abs(roi))}</td><td style="color:${pos?'#10b981':'#ef4444'};font-weight:600">${pos?'PROFITABLE':'Recovering'}</td></tr>`;
   }
   h+='</tbody></table>';
   $('mktTable').innerHTML=h;
+}
+
+function renderBarriers(cc,city,fleet,evPrem,isBike,seg,vData){
+  const driverAnnualIncome=Math.round(cc.hourly*8*300);
+  const premPctIncome=evPrem>0?Math.round(evPrem/driverAnnualIncome*100):0;
+  const spec=CHARGE_SPECS[seg]||CHARGE_SPECS.compact;
+  const barriers=[
+    {icon:'\uD83D\uDCB0',title:'Driver Capital Gap',
+     desc:'Most ride-hail drivers in '+cc.name+' self-finance vehicles. The EV premium of $'+evPrem.toLocaleString()+'/vehicle is '+(premPctIncome>0?premPctIncome+'% of':'comparable to')+' a driver\'s annual income (~$'+driverAnnualIncome.toLocaleString()+'/yr at $'+cc.hourly.toFixed(1)+'/hr). Banks in emerging markets charge 2-5% higher rates for EV loans due to uncertain resale values, making monthly payments even higher.'},
+    {icon:'\uD83D\uDD0C',title:'Charger Buildout Takes 2-3 Years',
+     desc:city.name+' currently has '+(city.dc||0)+' DC + '+(city.ac||0)+' AC chargers'+(city.sw?(' + '+city.sw+' swap stations'):'')+'. Building fleet-scale infrastructure requires permits, construction, grid upgrades, and land leases. Each DC charger needs a dedicated high-voltage grid connection. This model uses a realistic 5-year phased ramp, not instant deployment.'},
+    {icon:'\u26A1',title:'Grid Capacity & Connection Costs',
+     desc:'Each DC fast charger draws 50-150kW. Grid connection costs ~$'+(isBike?'2,000':'10,000')+'/charger in '+cc.name+'. In Tier 2/3 cities, the electrical grid may not support clusters of fast chargers without substation upgrades ($50K-$500K each). This is the #1 bottleneck in markets like Cambodia, Myanmar, and Philippines.'},
+    {icon:'\uD83D\uDE30',title:'Range Anxiety & Driver Resistance',
+     desc:'Even when TCO math works, drivers resist switching. EV range is ~'+spec.range+'km vs 500km+ ICE. Fear of being stranded mid-shift is real, especially in cities with sparse charger networks ('+city.name+' charger score: '+Math.round(city.c*100)+'%). Behavioral adoption follows an S-curve — expect 3-5 years for majority adoption even with good economics.'},
+    {icon:'\uD83D\uDCC9',title:'EV Resale Value Uncertainty',
+     desc:cc.name+'\'s EV market share is only '+cc.evSh+'%. With limited resale data, both banks and drivers view EV depreciation as a risk. Model assumes '+cc.evR+'% EV residual vs '+cc.iceR+'% ICE — but actual resale could be significantly worse. Battery degradation fears further depress used EV values. This risk alone can erase 1-2 years of operational savings.'},
+    {icon:'\uD83C\uDFED',title:'Supply Constraints & Model Availability',
+     desc:'Fleet orders of '+fleet.toLocaleString()+' vehicles face 3-12 month lead times. '+cc.name+' has limited local EV assembly'+(cc.name==='Thailand'?' (though BYD factory now operational)':cc.name==='Vietnam'?' (VinFast has local production)':'')+'. The specific EV model used in this analysis ('+vData.ev.name+') may not be available in sufficient quantities for fleet procurement.'},
+  ];
+  let html='';
+  for(const b of barriers){
+    html+=`<div class="factor-card" style="border-color:#f59e0b33"><h4 style="color:#f59e0b">${b.icon} ${b.title}</h4><p>${b.desc}</p></div>`;
+  }
+  $('mktBarriers').innerHTML=html;
 }
 
 function wireMkt(){
