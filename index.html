@@ -101,6 +101,7 @@ footer a{color:var(--accent);text-decoration:none}
             <option value="midsize">Mid-size Car</option>
             <option value="suv">SUV / Crossover</option>
             <option value="mpv">MPV / Minivan (7-seat ride-hail)</option>
+            <option value="mpv_premium">Premium MPV (Denza D9 / Zeekr 009 vs Alphard)</option>
             <option value="motorbike_commuter">Motorbike — Commuter (110-125cc class)</option>
             <option value="motorbike_premium">Motorbike — Premium Scooter (150cc+ class)</option>
           </select>
@@ -251,6 +252,7 @@ footer a{color:var(--accent);text-decoration:none}
       <select id="mktSeg">
         <option value="compact">Compact Car (GrabCar)</option>
         <option value="mpv">MPV (Grab Premium/Exec)</option>
+        <option value="mpv_premium">Premium MPV (GrabExec — D9/X9/009 vs Alphard)</option>
         <option value="motorbike_commuter">Motorbike — Commuter (GrabBike/Delivery)</option>
         <option value="motorbike_premium">Motorbike — Premium (GrabBike)</option>
       </select>
@@ -493,6 +495,9 @@ const C = {
         ev:{name:'BYD M6 Extended',price:27820,eff:5.0,m:210,i:640,t:10},
         ice:{name:'Toyota Innova Zenix 2.0V',price:37080,kpl:14,m:520,i:560,t:100},
         hybrid:{name:'Toyota Innova Zenix HEV',price:45390,kpl:20,m:440,i:600,t:80}},
+      mpv_premium:{
+        ev:{name:'Denza D9 EV FWD (RM259K)',price:58200,eff:5.4,m:800,i:1350,t:10},
+        ice:{name:'Toyota Alphard 2.4T (RM538K)',price:120900,kpl:9,m:1200,i:2700,t:90}},
       motorbike_commuter:{
         ev:{name:'Blueshark R1 / Chinese EV',price:1500,eff:25,m:35,i:70,t:5},
         ice:{name:'Honda Wave 110',price:870,kpl:55,m:60,i:40,t:8}},
@@ -500,7 +505,7 @@ const C = {
         ev:{name:'NIU NQi / Yadea',price:2600,eff:18,m:45,i:100,t:5},
         ice:{name:'Honda PCX 160',price:2470,kpl:40,m:100,i:80,t:12}},
     },
-    policy:{sub:'No direct cash subsidy',duty:'100% import/excise exemption EV to 2027',tax:'EV road tax ~RM20-50 (kW based)',chrg:'~3,000 chargers',note:'RON 95 at RM2.05/L ($0.47) HEAVILY subsidized — distorts TCO. BYD M6 MPV now available from RM110K.'}
+    policy:{sub:'No direct cash subsidy',duty:'100% import/excise exemption EV to 2027',tax:'EV road tax ~RM20-50 (kW based)',chrg:'~3,000 chargers',note:'RON 95 at RM2.05/L ($0.47) HEAVILY subsidized — distorts TCO. Premium EV MPVs (Denza D9 RM259K, XPeng X9 RM281K, Zeekr 009 RM300K) are HALF the price of Alphard (RM538K) due to 100% EV duty exemption.'}
   },
   singapore: {
     name:'Singapore', flag:'\u{1F1F8}\u{1F1EC}', cur:'SGD', rate:1.35,
@@ -688,8 +693,17 @@ function selC(c){
   // Hide motorbike options for SG
   const segEl=$('segment');
   const hasBikes=!!cc.v.motorbike_commuter;
-  [...segEl.options].forEach(o=>{if(o.value.startsWith('motorbike'))o.style.display=hasBikes?'':'none';});
+  const hasPremMpv=!!cc.v.mpv_premium;
+  [...segEl.options].forEach(o=>{
+    if(o.value.startsWith('motorbike'))o.style.display=hasBikes?'':'none';
+    if(o.value==='mpv_premium')o.style.display=hasPremMpv?'':'none';
+  });
   if(!hasBikes&&segEl.value.startsWith('motorbike'))segEl.value='compact';
+  if(!hasPremMpv&&segEl.value==='mpv_premium')segEl.value='mpv';
+  // Also hide/show in marketplace selector
+  const mktSel=$('mktSeg');
+  [...mktSel.options].forEach(o=>{if(o.value==='mpv_premium')o.style.display=hasPremMpv?'':'none';});
+  if(!hasPremMpv&&mktSel.value==='mpv_premium')mktSel.value='mpv';
   updDisp();render();
 }
 
@@ -748,6 +762,7 @@ const CHARGE_SPECS={
   midsize:{range:400,dcMin:40,acHrs:8,battKwh:70},
   suv:{range:380,dcMin:45,acHrs:9,battKwh:75},
   mpv:{range:420,dcMin:50,acHrs:10,battKwh:72},
+  mpv_premium:{range:520,dcMin:50,acHrs:12,battKwh:103},
   motorbike_commuter:{range:80,dcMin:0,acHrs:5,battKwh:2.5},
   motorbike_premium:{range:120,dcMin:0,acHrs:6,battKwh:4},
 };
@@ -1301,6 +1316,7 @@ function wireMkt(){
   $('mktSeg').addEventListener('change',()=>{
     const s=$('mktSeg').value,isBike=s.startsWith('motorbike');
     if(isBike){$('mktTrips').value=18;$('mktDist').value=5;$('mktPrem').value=500;$('mktDCCost').value=15000;$('mktACCost').value=2000;}
+    else if(s==='mpv_premium'){$('mktTrips').value=6;$('mktDist').value=15;$('mktPrem').value=0;$('mktDCCost').value=60000;$('mktACCost').value=8000;$('mktFleet').value=500;}
     else if(s==='mpv'){$('mktTrips').value=10;$('mktDist').value=12;$('mktPrem').value=5000;}
     else{$('mktTrips').value=12;$('mktDist').value=8;$('mktPrem').value=3000;$('mktDCCost').value=40000;$('mktACCost').value=5000;}
     mktSliders.forEach(sl=>{$(sl.d).textContent=sl.f($(sl.id).value);});
