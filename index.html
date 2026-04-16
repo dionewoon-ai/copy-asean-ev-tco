@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ASEAN + Taiwan EV TCO — Cars & Motorbikes</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="script.js"></script>
 <style>
 :root{--ev:#10b981;--ice:#ef4444;--hybrid:#f59e0b;--bg:#0f172a;--surface:#1e293b;--surface2:#334155;--text:#e2e8f0;--muted:#94a3b8;--border:#475569;--accent:#38bdf8;--bike:#06b6d4}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -1329,7 +1330,16 @@ function wireMkt(){
 }
 
 // ========== INIT ==========
-buildBar();initCh();initMktChart();wireSliders();wireMkt();selC('thailand');renderMkt();
+(async function init() {
+  try {
+    const metrics = await loadAseanMetrics(); // from script.js
+    applyMetricsToC(metrics);                 // overrides C with CSV values
+    console.log('CSV metrics loaded:', Object.keys(metrics));
+  } catch (e) {
+    console.warn('CSV load failed — using built-in defaults.', e.message);
+  }
+  buildBar();initCh();initMktChart();wireSliders();wireMkt();selC('thailand');renderMkt();
+})();
 </script>
 </body>
 </html>
