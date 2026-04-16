@@ -881,6 +881,8 @@ function render(){
   const yrs=p.yrs,types=d._types,dt=d._dt,isBike=p.seg.startsWith('motorbike');
   const lbls=Array.from({length:yrs+1},(_,i)=>i===0?'Buy':'Y'+i);
   const cc=C[curC];
+  const city=cc.cities.find(c=>c.id===p.city)||cc.cities[0];
+  const dcCount=city.dc||0, acCount=city.ac||0, swCount=city.sw||0;
 
   // Downtime box — always show (but flag personal as minimal impact)
   const dtBox=$('downtimeBox');
@@ -902,7 +904,6 @@ function render(){
 
   // Infrastructure bottleneck — now swap-aware
   const fleet=+$('fleetSize').value;
-  const city = cc.cities.find(c => c.id === p.city) || cc.cities[0];
   const bikeSwapAvail=isBike&&cc.swapAvail&&swCount>0;
 
   // Capacity per station type per day:
