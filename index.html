@@ -377,6 +377,14 @@ footer a{color:var(--accent);text-decoration:none}
 </footer>
 <script>
 // ========== COUNTRY DATA — verified prices in USD ==========
+// NOTE: The following fields are overridden at runtime by data/country_metrics.csv
+// (loaded via script.js). Edit the CSV to update live values — do not edit here:
+//   gas, diesel, eH, eP, sub, int, fInf, avgKm, evR, iceR, hybR, hourly, evSh
+// All other data (cities, vehicle prices, policy text) is only defined below.
+// Reference CSVs (not yet wired to app, for documentation/Google Sheets use):
+//   data/vehicle_prices.csv, data/city_data.csv, data/model_assumptions.csv
+//   data/charge_specs.csv, data/use_case_multipliers.csv
+//   data/phased_deployment_ramp.csv, data/marketplace_segment_defaults.csv
 const C = {
   thailand: {
     name:'Thailand', flag:'\u{1F1F9}\u{1F1ED}', cur:'THB', rate:35,

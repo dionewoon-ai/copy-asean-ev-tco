@@ -1,0 +1,6 @@
+segment,label,trips_per_day,avg_trip_km,ev_premium_usd,dc_charger_cost_usd,ac_charger_cost_usd,default_fleet_size,notes
+compact,GrabCar,12,8,3000,40000,5000,,Standard GrabCar sedan. High trip frequency short distance.
+mpv,Grab Premium/Exec,10,12,5000,40000,5000,,7-seat MPV for GrabExec. Fewer trips longer distance.
+mpv_premium,GrabExec Premium (D9 vs Alphard),6,15,0,60000,8000,500,Premium MPV. EV premium auto-calculated from vehicle price gap. Larger DC charger needed.
+motorbike_commuter,GrabBike / GrabFood Delivery,18,5,500,15000,2000,,High frequency short trips. Cheaper charger hardware.
+motorbike_premium,GrabBike Premium,18,5,500,15000,2000,,Premium scooter segment. Same trip profile as commuter bike.

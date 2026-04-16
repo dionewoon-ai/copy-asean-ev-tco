@@ -5,7 +5,7 @@
  * the dashboard falls back to the baked-in values in const C without breaking.
  */
 async function loadAseanMetrics() {
-  const response = await fetch('data/asean_metrics.csv');
+  const response = await fetch('data/country_metrics.csv');
   if (!response.ok) throw new Error('CSV fetch failed: ' + response.status);
   const text = await response.text();
 

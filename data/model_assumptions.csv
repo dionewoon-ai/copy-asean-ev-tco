@@ -1,0 +1,31 @@
+assumption_key,value,unit,section,description
+fleet_home_charging_ratio,0.2,ratio,Marketplace Economics,Fleet/ride-hail drivers charge at home or depot (20%). Rest is public DC.
+fleet_public_dc_ratio,0.8,ratio,Marketplace Economics,Fleet/ride-hail drivers use public DC charging (80%).
+dc_sessions_per_day,7,sessions/charger/day,Infrastructure,Each DC fast charger serves ~7 vehicles/day (45 min charge over 16 hrs operating)
+ac_sessions_per_day,2.5,sessions/charger/day,Infrastructure,Each AC charger serves ~2.5 vehicles/day (6-8 hr charge over 16 hrs operating)
+swap_sessions_per_day,120,sessions/station/day,Infrastructure,Each battery swap station serves ~120 vehicles/day (~3 min avg visit including walk)
+infra_healthy_utilisation_threshold,0.7,ratio,Infrastructure,Above 70% utilisation considered congested (healthy cap for capacity calc)
+infra_moderate_threshold,0.3,ratio,Infrastructure,Below 30% utilisation = Low contention
+infra_high_threshold,0.6,ratio,Infrastructure,Above 60% utilisation = High contention
+infra_critical_threshold,0.85,ratio,Infrastructure,Above 85% utilisation = Critical bottleneck
+ice_range_per_tank,500,km,Downtime Model,ICE vehicle range per full tank used to estimate refuel frequency
+ice_refuel_time,8,minutes,Downtime Model,Time per ICE refuel stop including travel to station
+fleet_taxi_work_days_per_year,300,days/year,Downtime Model,Operating days per year for fleet/taxi use cases
+battery_degradation_rate,0.02,per year,TCO Calculation,Annual battery capacity degradation (2%/yr affects EV efficiency)
+financing_cost_factor,0.55,multiplier,TCO Calculation,Financing cost shortcut: price × interest_rate × years × 0.55
+residual_decay_rate,0.25,per year,TCO Calculation,Exponential residual value decay rate (exp(-0.25 × year))
+insurance_floor,0.70,ratio,TCO Calculation,Insurance cost floor as ratio of year-1 insurance (min 70%)
+insurance_annual_reduction,0.03,per year,TCO Calculation,Annual insurance cost reduction rate (3%/yr)
+maintenance_annual_growth,0.05,per year,TCO Calculation,Annual maintenance cost growth rate (5%/yr)
+ev_subsidy_price_floor,0.50,ratio,TCO Calculation,EV subsidy cannot reduce price below 50% of original price
+grid_connection_cost_car,10000,USD,Marketplace Economics,Grid connection fee per DC charger for car fleets
+grid_connection_cost_bike,2000,USD,Marketplace Economics,Grid connection fee per DC charger for motorbike fleets
+driver_ev_training_cost,30,USD/driver,Marketplace Economics,One-time EV onboarding and training cost per driver
+dc_charger_annual_maintenance,0.06,ratio of capex,Marketplace Economics,DC charger annual maintenance cost as % of capex (6%)
+ac_charger_annual_maintenance,0.04,ratio of capex,Marketplace Economics,AC charger annual maintenance cost as % of capex (4%)
+fleet_mgmt_overhead_car,50,USD/vehicle/year,Marketplace Economics,EV fleet management overhead per car per year
+fleet_mgmt_overhead_bike,15,USD/vehicle/year,Marketplace Economics,EV fleet management overhead per motorbike per year
+ev_loan_premium,0.02,additional rate,Marketplace Economics,Higher financing cost for EV loans vs ICE (2% extra due to resale uncertainty)
+sensitivity_test_increment,0.20,ratio,Sensitivity Analysis,Sensitivity analysis tests each variable at +20% of current value
+bike_ac_charge_ratio,0.70,ratio,Downtime Model,Motorbikes need ~70% charge mid-shift (not full charge)
+swap_session_time,5,minutes,Downtime Model,Battery swap station visit time including walk (~5 min)

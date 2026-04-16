@@ -1,0 +1,4 @@
+use_case,km_multiplier,home_charging_multiplier,maintenance_multiplier,downtime_applies,notes
+personal,1.0,1.0,1.0,false,Baseline. Uses country avgKm. Charges at home overnight. No lost earnings from downtime.
+taxi,3.0,0.6,1.8,true,Ride-hail/taxi. 3x annual km. 60% home charging access. 1.8x maintenance wear. Downtime costs apply.
+fleet,2.5,0.5,1.5,true,Delivery/logistics fleet. 2.5x annual km. 50% home/depot charging. 1.5x maintenance. Downtime costs apply.

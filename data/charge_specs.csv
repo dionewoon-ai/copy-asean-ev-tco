@@ -1,0 +1,8 @@
+segment,range_km,dc_charge_min,ac_charge_hrs,battery_kwh,notes
+compact,350,45,7,55,Standard compact EV e.g. BYD Dolphin. DC = 10→80%.
+midsize,400,40,8,70,Mid-size sedan e.g. BYD Seal / Tesla Model 3.
+suv,380,45,9,75,SUV e.g. BYD Atto 3 / Tesla Model Y.
+mpv,420,50,10,72,7-seat MPV e.g. BYD M6. Larger battery but slower DC due to thermal limits.
+mpv_premium,520,50,12,103,Premium MPV e.g. Denza D9 / Zeekr 009. Large 103kWh pack.
+motorbike_commuter,80,0,5,2.5,Commuter e-bike e.g. VinFast Evo / Gogoro Jego. AC only — no DC port.
+motorbike_premium,120,0,6,4,Premium e-scooter e.g. NIU NQi / Gogoro S2. AC only — no DC port.

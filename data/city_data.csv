@@ -1,0 +1,54 @@
+country,city_id,city_name,fuel_multiplier,elec_multiplier,km_intensity,charging_score,dc_chargers,ac_chargers,swap_stations
+thailand,bkk,Bangkok,1,1,1,0.9,2800,4500,0
+thailand,cnx,Chiang Mai,1.02,0.98,0.8,0.6,350,600,0
+thailand,hkt,Phuket,1.03,1.01,0.85,0.5,200,350,0
+thailand,pty,Pattaya,1.01,1,0.9,0.7,300,450,0
+thailand,kkn,Khon Kaen,1.01,0.97,0.7,0.4,80,150,0
+thailand,hdy,Hat Yai,1.02,0.98,0.75,0.35,60,120,0
+thailand,nkr,Nakhon Ratchasima,1.01,0.97,0.7,0.35,50,100,0
+thailand,udi,Udon Thani,1.02,0.98,0.65,0.3,30,70,0
+vietnam,hn,Hanoi,1,1,1,0.9,3000,45000,500
+vietnam,hcm,Ho Chi Minh City,1,1,1.1,0.9,3500,50000,600
+vietnam,dn,Da Nang,1.01,0.98,0.8,0.6,400,5000,80
+vietnam,hp,Hai Phong,1.01,0.99,0.75,0.5,250,3000,50
+vietnam,ct,Can Tho,1.02,0.99,0.7,0.4,100,1500,30
+vietnam,nt,Nha Trang,1.02,1,0.7,0.45,120,1800,25
+vietnam,hue,Hue,1.01,0.98,0.65,0.35,60,800,15
+indonesia,jkt,Jakarta,1,1,1,0.7,800,2000,200
+indonesia,sby,Surabaya,0.98,0.98,0.85,0.4,120,300,30
+indonesia,bdg,Bandung,0.98,0.97,0.8,0.35,80,200,20
+indonesia,bal,Bali (Denpasar),1.02,1,0.7,0.5,150,350,40
+indonesia,mdn,Medan,0.99,0.98,0.8,0.3,50,120,10
+indonesia,smg,Semarang,0.98,0.97,0.8,0.35,60,150,15
+indonesia,mks,Makassar,1.01,0.99,0.75,0.25,30,80,5
+indonesia,yk,Yogyakarta,0.97,0.97,0.75,0.3,40,100,10
+malaysia,kl,Kuala Lumpur,1,1,1,0.7,600,1500,0
+malaysia,pg,Penang,1,1,0.85,0.5,120,300,0
+malaysia,jb,Johor Bahru,1,1,0.9,0.55,150,350,0
+malaysia,ip,Ipoh,1,0.98,0.7,0.35,40,100,0
+malaysia,kb,Kota Bharu,1.01,0.99,0.6,0.2,15,40,0
+malaysia,kk,Kota Kinabalu,1.02,1.01,0.65,0.2,20,50,0
+malaysia,kch,Kuching,1.02,1,0.65,0.25,25,60,0
+malaysia,mlk,Melaka,1,1,0.75,0.4,50,120,0
+singapore,sg,Singapore,1,1,1,0.95,1200,3800,0
+philippines,mnl,Metro Manila,1,1,1,0.4,120,300,0
+philippines,ceb,Cebu,1.02,1.02,0.8,0.2,20,50,0
+philippines,dvo,Davao,1.01,1.01,0.7,0.15,10,30,0
+philippines,clk,Clark/Angeles,1.01,1,0.75,0.15,10,25,0
+philippines,ilo,Iloilo,1.02,1.02,0.65,0.1,5,15,0
+philippines,bcd,Bacolod,1.02,1.02,0.6,0.08,3,10,0
+cambodia,pp,Phnom Penh,1,1,1,0.3,30,150,0
+cambodia,sr,Siem Reap,1.03,1.05,0.6,0.1,5,20,0
+cambodia,btb,Battambang,1.04,1.06,0.5,0.05,2,8,0
+cambodia,shv,Sihanoukville,1.05,1.05,0.55,0.08,3,15,0
+myanmar,ygn,Yangon,1,1,1,0.1,10,30,0
+myanmar,mdy,Mandalay,1.02,1.05,0.7,0.03,2,8,0
+myanmar,npt,Naypyidaw,1.01,1.02,0.5,0.02,1,5,0
+myanmar,mdl,Mawlamyine,1.03,1.05,0.45,0.01,0,2,0
+taiwan,tpe,Taipei,1,1,1,0.85,2000,6000,800
+taiwan,txg,Taichung,0.99,0.98,0.9,0.6,500,1500,350
+taiwan,khh,Kaohsiung,0.99,0.98,0.85,0.55,400,1200,300
+taiwan,tnn,Tainan,0.99,0.97,0.8,0.5,300,900,250
+taiwan,hsc,Hsinchu,1,1,0.85,0.65,350,1000,150
+taiwan,cyc,Chiayi,0.99,0.97,0.7,0.4,100,300,80
+taiwan,ptc,Pingtung,0.99,0.97,0.65,0.35,80,250,60
