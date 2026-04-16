@@ -74,7 +74,7 @@ footer a{color:var(--accent);text-decoration:none}
 </head>
 <body>
 <div class="hero">
-  <h1> HI SHITING LIM !!! ASEAN + Taiwan — EV Total Cost of Ownership</h1>
+  <h1> ASEAN + Taiwan — EV Total Cost of Ownership</h1>
   <p>Cars &amp; 2-wheel motorbikes. Compare EV vs ICE for drivers, fleet owners, and ride-hail/delivery platforms. Includes charging downtime costs.</p>
 </div>
 <div class="country-bar" id="countryBar"></div>
@@ -902,7 +902,7 @@ function render(){
 
   // Infrastructure bottleneck — now swap-aware
   const fleet=+$('fleetSize').value;
-  const dcCount=city.dc||0, acCount=city.ac||0, swCount=city.sw||0;
+  const city = cc.cities.find(c => c.id === p.city) || cc.cities[0];
   const bikeSwapAvail=isBike&&cc.swapAvail&&swCount>0;
 
   // Capacity per station type per day:
